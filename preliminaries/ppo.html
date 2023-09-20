@@ -400,6 +400,8 @@ document.write(`
 <span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>
 <span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="kn">import</span> <span class="n">Distribution</span><span class="p">,</span> <span class="n">Normal</span>
 <span class="kn">from</span> <span class="nn">torch.optim</span> <span class="kn">import</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Adam</span>
+
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">Video</span>
 </pre></div>
 </div>
 </div>
@@ -604,7 +606,7 @@ action spec: ActionSpec(dim=1, min=array([-2.], dtype=float32), max=array([2.], 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>action: tensor([-0.3109])
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>action: tensor([-0.3802])
 log-probability: -0.3060244917869568
 </pre></div>
 </div>
@@ -645,7 +647,7 @@ log-probability: -0.3060244917869568
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>estimated state value: 0.14452174305915833
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>estimated state value: 0.13156895339488983
 </pre></div>
 </div>
 </div>
@@ -722,7 +724,7 @@ log-probability: -0.3060244917869568
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>advantages: [-0.98058068 -0.39223227  1.37281295]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>advantages: [-0.98058067 -0.39223227  1.37281295]
 </pre></div>
 </div>
 </div>
@@ -1030,8 +1032,6 @@ log-probability: -0.3060244917869568
             
             <span class="c1"># Clear replay buffer</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_replay_buffer</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-
-            
 </pre></div>
 </div>
 </div>
@@ -1318,7 +1318,7 @@ Critic(
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">RecordVideo</span><span class="p">(</span>
     <span class="n">env</span><span class="p">,</span> 
-    <span class="n">video_folder</span><span class="o">=</span><span class="s2">&quot;../videos&quot;</span><span class="p">,</span>
+    <span class="n">video_folder</span><span class="o">=</span><span class="s2">&quot;../_static/videos&quot;</span><span class="p">,</span>
     <span class="n">name_prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;ppo-</span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span>
 <span class="p">)</span>
 
@@ -1347,18 +1347,33 @@ Critic(
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Moviepy - Building video /Users/isaac/Developer/py-projects/linguAML/book/videos/ppo-Pendulum-v1-episode-0.mp4.
-Moviepy - Writing video /Users/isaac/Developer/py-projects/linguAML/book/videos/ppo-Pendulum-v1-episode-0.mp4
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/anaconda3/envs/linguaml/lib/python3.11/site-packages/gymnasium/wrappers/record_video.py:94: UserWarning: <span class=" -Color -Color-Yellow">WARN: Overwriting existing videos at /Users/isaac/Developer/py-projects/linguAML/book/_static/videos folder (try specifying a different `video_folder` for the `RecordVideo` wrapper if this is not desired)</span>
+  logger.warn(
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Moviepy - Building video /Users/isaac/Developer/py-projects/linguAML/book/_static/videos/ppo-Pendulum-v1-episode-0.mp4.
+Moviepy - Writing video /Users/isaac/Developer/py-projects/linguAML/book/_static/videos/ppo-Pendulum-v1-episode-0.mp4
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                                                                
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Moviepy - Done !
-Moviepy - video ready /Users/isaac/Developer/py-projects/linguAML/book/videos/ppo-Pendulum-v1-episode-0.mp4
+Moviepy - video ready /Users/isaac/Developer/py-projects/linguAML/book/_static/videos/ppo-Pendulum-v1-episode-0.mp4
 </pre></div>
 </div>
 </div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Video</span><span class="p">(</span><span class="s2">&quot;../_static/videos/ppo-Pendulum-v1-episode-0.mp4&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><video src="../_static/videos/ppo-Pendulum-v1-episode-0.mp4" controls  >
+      Your browser does not support the <code>video</code> element.
+    </video></div></div>
 </div>
 </section>
 </section>
