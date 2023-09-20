@@ -1,0 +1,1495 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>PPO &#8212; LinguAML</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'preliminaries/ppo';</script>
+    <link rel="shortcut icon" href="../_static/control-knobs.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="LSTM" href="lstm.html" />
+    <link rel="prev" title="Preliminaries" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/library.jpg" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../_static/library.jpg" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    LinguAML
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Preliminaries</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">PPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lstm.html">LSTM</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction/index.html">Introduction</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/Isaac-Fate/LinguAML" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Isaac-Fate/LinguAML/issues/new?title=Issue%20on%20page%20%2Fpreliminaries/ppo.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/preliminaries/ppo.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>PPO</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ppo-algorithm">PPO Algorithm</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#environment-specifications">Environment Specifications</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#actor-and-critic-models">Actor and Critic Models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transition-data">Transition Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#updating-actor-and-critic">Updating Actor and Critic</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ppo-class">PPO Class</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#training">Training</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-models">Loading Models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-of-the-trained-agent">Performance of the Trained Agent</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="ppo">
+<h1>PPO<a class="headerlink" href="#ppo" title="Permalink to this heading">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Self</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span><span class="p">,</span> <span class="n">deque</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">count</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+
+<span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">Env</span>
+<span class="kn">from</span> <span class="nn">gymnasium.wrappers.record_video</span> <span class="kn">import</span> <span class="n">RecordVideo</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>
+<span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="kn">import</span> <span class="n">Distribution</span><span class="p">,</span> <span class="n">Normal</span>
+<span class="kn">from</span> <span class="nn">torch.optim</span> <span class="kn">import</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Adam</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
+    <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+    <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> | </span><span class="si">%(levelname)s</span><span class="s2"> | </span><span class="si">%(message)s</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Pendulum-v1&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="ppo-algorithm">
+<h2>PPO Algorithm<a class="headerlink" href="#ppo-algorithm" title="Permalink to this heading">#</a></h2>
+<p>The following snapshot shows the pseudocode of the PPO-Clip algorithm:</p>
+<p><a class="reference internal" href="../_images/ppo-clip.png"><img alt="../_images/ppo-clip.png" src="../_images/ppo-clip.png" style="width: 500px;" /></a></img></p>
+</section>
+<section id="environment-specifications">
+<h2>Environment Specifications<a class="headerlink" href="#environment-specifications" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_state_dim</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+<span class="k">def</span> <span class="nf">get_action_dim</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;state space dim: </span><span class="si">{</span><span class="n">get_state_dim</span><span class="p">(</span><span class="n">env</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;action space dim: </span><span class="si">{</span><span class="n">get_action_dim</span><span class="p">(</span><span class="n">env</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>state space dim: 3
+action space dim: 1
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ActionSpec</span><span class="p">:</span>
+    <span class="n">dim</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="nb">min</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="nb">max</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_env</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">dim</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="nb">min</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;low&quot;</span><span class="p">],</span>
+            <span class="nb">max</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;high&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+
+<span class="n">state_dim</span> <span class="o">=</span> <span class="n">get_state_dim</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+<span class="n">action_spec</span> <span class="o">=</span> <span class="n">ActionSpec</span><span class="o">.</span><span class="n">from_env</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;state dim: </span><span class="si">{</span><span class="n">state_dim</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;action spec: </span><span class="si">{</span><span class="n">action_spec</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>state dim: 3
+action spec: ActionSpec(dim=1, min=array([-2.], dtype=float32), max=array([2.], dtype=float32))
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="actor-and-critic-models">
+<h2>Actor and Critic Models<a class="headerlink" href="#actor-and-critic-models" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MLP</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">in_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">out_dim</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_dim</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer3</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="n">out_dim</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer1</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer3</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">x</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Actor</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">state_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">action_spec</span><span class="p">:</span> <span class="n">ActionSpec</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_action_min</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">action_spec</span><span class="o">.</span><span class="n">min</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_action_max</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">action_spec</span><span class="o">.</span><span class="n">max</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_distribution</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_action</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">mlp</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span>
+            <span class="n">in_dim</span><span class="o">=</span><span class="n">state_dim</span><span class="p">,</span>
+            <span class="c1"># out_dim=action_spec.dim * 2,</span>
+            <span class="n">out_dim</span><span class="o">=</span><span class="n">action_spec</span><span class="o">.</span><span class="n">dim</span> <span class="o">*</span> <span class="mi">1</span>
+        <span class="p">)</span>
+        
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Distribution</span><span class="p">]:</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distribution</span>
+        
+    
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        
+        <span class="n">out</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mlp</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        
+        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">*</span><span class="n">out</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">mean</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">out</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_action_max</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_action_min</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_action_min</span>
+        <span class="n">std</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">mean</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_distribution</span> <span class="o">=</span> <span class="n">Normal</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">out</span>
+    
+    <span class="k">def</span> <span class="nf">select_action</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> 
+            <span class="n">state</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        
+        <span class="k">if</span> <span class="n">state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+        <span class="c1"># Sample an action from the distribution</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distribution</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+        
+        <span class="c1"># Clip the action value by upper and lower bounds</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_action_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_action_max</span><span class="p">)</span>
+        
+        <span class="c1"># Store the action taken</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_action</span> <span class="o">=</span> <span class="n">action</span>
+        
+        <span class="k">return</span> <span class="n">action</span>
+    
+    <span class="k">def</span> <span class="nf">log_prob</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> 
+            <span class="n">action</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">state</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        
+        <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span>\
+                <span class="s2">&quot;the state must be set None since the action is None&quot;</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distribution</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_action</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+            
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distribution</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">action</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">actor</span> <span class="o">=</span> <span class="n">Actor</span><span class="p">(</span><span class="n">state_dim</span><span class="p">,</span> <span class="n">action_spec</span><span class="p">)</span>
+<span class="n">state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+<span class="n">action</span> <span class="o">=</span> <span class="n">actor</span><span class="o">.</span><span class="n">select_action</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+<span class="n">log_prob</span> <span class="o">=</span> <span class="n">actor</span><span class="o">.</span><span class="n">log_prob</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;log-probability: </span><span class="si">{</span><span class="n">log_prob</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>action: tensor([-0.3109])
+log-probability: -0.3060244917869568
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Critic</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">mlp</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span>
+            <span class="n">in_dim</span><span class="o">=</span><span class="n">state_dim</span><span class="p">,</span>
+            <span class="n">out_dim</span><span class="o">=</span><span class="mi">1</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        
+        <span class="n">out</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mlp</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">value</span>
+
+<span class="n">critic</span> <span class="o">=</span> <span class="n">Critic</span><span class="p">(</span><span class="n">state_dim</span><span class="p">)</span>
+<span class="n">state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+<span class="n">value</span> <span class="o">=</span> <span class="n">critic</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;estimated state value: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>estimated state value: 0.14452174305915833
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">compute_rewards_to_go</span><span class="p">(</span><span class="n">rewards</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+    
+    <span class="n">rewards</span> <span class="o">=</span> <span class="n">rewards</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">rewards_to_go</span> <span class="o">=</span> <span class="n">deque</span><span class="p">()</span>
+    
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">rewards</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Iterate the rewards from back to front</span>
+        <span class="n">reward</span> <span class="o">=</span> <span class="n">rewards</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        
+        <span class="c1"># The value of reward-to-go </span>
+        <span class="c1"># associated with the next state</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rewards_to_go</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">next_reward_to_go</span> <span class="o">=</span> <span class="n">rewards_to_go</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">next_reward_to_go</span> <span class="o">=</span> <span class="mi">0</span>
+        
+        <span class="c1"># Compute reward-go-to associated with current state</span>
+        <span class="n">reward_to_go</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">next_reward_to_go</span>
+        
+        <span class="c1"># Add to the front of the queue</span>
+        <span class="n">rewards_to_go</span><span class="o">.</span><span class="n">appendleft</span><span class="p">(</span><span class="n">reward_to_go</span><span class="p">)</span>
+    
+    <span class="c1"># Convert to list</span>
+    <span class="n">rewards_to_go</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">rewards_to_go</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">rewards_to_go</span>
+
+<span class="n">compute_rewards_to_go</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[3.0, 20.0, 100.0]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">compute_advantages</span><span class="p">(</span>
+        <span class="n">critic</span><span class="p">:</span> <span class="n">Critic</span><span class="p">,</span>
+        <span class="n">rewards_to_go</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> 
+        <span class="n">states</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+    <span class="p">):</span>
+    
+    <span class="c1"># State values</span>
+    <span class="n">states</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">states</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">critic</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    
+    <span class="c1"># Compute advantages</span>
+    <span class="n">rewards_to_go</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rewards_to_go</span><span class="p">)</span>
+    <span class="n">advantages</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">rewards_to_go</span> <span class="o">-</span> <span class="n">values</span>
+    
+    <span class="c1"># Normalize the advatages</span>
+    <span class="n">advantages</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">zscore</span><span class="p">(</span><span class="n">advantages</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">advantages</span>
+
+<span class="n">advantages</span> <span class="o">=</span> <span class="n">compute_advantages</span><span class="p">(</span>
+    <span class="n">critic</span><span class="p">,</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">state</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;advantages: </span><span class="si">{</span><span class="n">advantages</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>advantages: [-0.98058068 -0.39223227  1.37281295]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="transition-data">
+<h2>Transition Data<a class="headerlink" href="#transition-data" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Transition</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span>
+    <span class="s2">&quot;Transition&quot;</span><span class="p">,</span>
+    <span class="p">(</span>
+        <span class="s2">&quot;state&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;reward&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;reward_to_go&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;log_prob&quot;</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">convert_to_transition_with_fields_as_lists</span><span class="p">(</span><span class="n">transitions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Transition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Transition</span><span class="p">:</span>
+    
+    <span class="k">return</span> <span class="n">Transition</span><span class="p">(</span><span class="o">*</span><span class="nb">map</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">transitions</span><span class="p">)))</span>
+    
+<span class="k">def</span> <span class="nf">convert_to_transitions</span><span class="p">(</span><span class="n">transition_with_fields_as_list</span><span class="p">:</span> <span class="n">Transition</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Transition</span><span class="p">:</span>
+    
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">fields</span><span class="p">:</span> <span class="n">Transition</span><span class="p">(</span><span class="o">*</span><span class="n">fields</span><span class="p">),</span> 
+        <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">transition_with_fields_as_list</span><span class="p">)</span>
+    <span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">play_one_episode</span><span class="p">(</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">,</span>
+        <span class="n">actor</span><span class="p">:</span> <span class="n">Actor</span><span class="p">,</span>
+        <span class="n">max_n_timesteps_per_episode</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.99</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Transition</span><span class="p">:</span>
+    
+    <span class="n">states</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">actions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">rewards</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">log_probs</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="n">is_done</span> <span class="o">=</span> <span class="kc">False</span>
+    
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_n_timesteps_per_episode</span><span class="p">):</span>
+        
+        <span class="c1"># Select an action</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">actor</span><span class="o">.</span><span class="n">select_action</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        
+        <span class="c1"># Compute the log-probability of the action taken</span>
+        <span class="n">log_prob</span> <span class="o">=</span> <span class="n">actor</span><span class="o">.</span><span class="n">log_prob</span><span class="p">()</span>
+        <span class="n">log_prob</span> <span class="o">=</span> <span class="n">log_prob</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        
+        <span class="c1"># Interact with the env</span>
+        <span class="n">next_state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">is_terminated</span><span class="p">,</span> <span class="n">is_truncated</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        
+        <span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="n">actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="n">rewards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span>
+        <span class="n">log_probs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">log_prob</span><span class="p">)</span>
+        
+        <span class="c1"># The episode ends</span>
+        <span class="n">is_done</span> <span class="o">=</span> <span class="n">is_terminated</span> <span class="ow">or</span> <span class="n">is_truncated</span>
+        <span class="k">if</span> <span class="n">is_done</span><span class="p">:</span>
+            <span class="k">break</span>
+        
+        <span class="c1"># Step to the next state</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">next_state</span>
+    
+    <span class="c1"># Compute the rewards-to-go </span>
+    <span class="c1"># based on the received rewards of entire episode</span>
+    <span class="n">rewards_to_go</span> <span class="o">=</span> <span class="n">compute_rewards_to_go</span><span class="p">(</span><span class="n">rewards</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">Transition</span><span class="p">(</span>
+        <span class="n">state</span><span class="o">=</span><span class="n">states</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="n">actions</span><span class="p">,</span>
+        <span class="n">reward</span><span class="o">=</span><span class="n">rewards</span><span class="p">,</span>
+        <span class="n">reward_to_go</span><span class="o">=</span><span class="n">rewards_to_go</span><span class="p">,</span>
+        <span class="n">log_prob</span><span class="o">=</span><span class="n">log_probs</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ReplayBuffer</span><span class="p">(</span><span class="n">deque</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">,</span>
+            <span class="n">capacity</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">max_n_timesteps_per_episode</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">maxlen</span><span class="o">=</span><span class="n">capacity</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env</span> <span class="o">=</span> <span class="n">env</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_capacity</span> <span class="o">=</span> <span class="n">capacity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_n_timesteps_per_episode</span> <span class="o">=</span> <span class="n">max_n_timesteps_per_episode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gamma</span> <span class="o">=</span> <span class="n">gamma</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">capacity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_capacity</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">max_n_timesteps_per_episode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_n_timesteps_per_episode</span>
+        
+    <span class="k">def</span> <span class="nf">collect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actor</span><span class="p">:</span> <span class="n">Actor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_capacity</span><span class="p">:</span>
+            
+            <span class="n">transition_with_fields_as_list</span> <span class="o">=</span> <span class="n">play_one_episode</span><span class="p">(</span>
+                <span class="n">env</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span>
+                <span class="n">actor</span><span class="o">=</span><span class="n">actor</span><span class="p">,</span>
+                <span class="n">max_n_timesteps_per_episode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_n_timesteps_per_episode</span><span class="p">,</span>
+                <span class="n">gamma</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_gamma</span>
+            <span class="p">)</span>
+            
+            <span class="c1"># Convert to list of transitions</span>
+            <span class="n">transitions</span> <span class="o">=</span> <span class="n">convert_to_transitions</span><span class="p">(</span><span class="n">transition_with_fields_as_list</span><span class="p">)</span>
+            
+            <span class="c1"># Add to the buffer</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">transitions</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="updating-actor-and-critic">
+<h2>Updating Actor and Critic<a class="headerlink" href="#updating-actor-and-critic" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">actor_opt</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="n">actor</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+<span class="n">critic_opt</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="n">critic</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">update_actor_critic</span><span class="p">(</span>
+        <span class="n">actor</span><span class="p">:</span> <span class="n">Actor</span><span class="p">,</span>
+        <span class="n">critic</span><span class="p">:</span> <span class="n">Critic</span><span class="p">,</span>
+        <span class="n">actor_opt</span><span class="p">:</span> <span class="n">Optimizer</span><span class="p">,</span>
+        <span class="n">critic_opt</span><span class="p">:</span> <span class="n">Optimizer</span><span class="p">,</span>
+        <span class="n">replay_buffer_loader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">,</span>
+        <span class="n">n_epochs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span>
+    <span class="p">):</span>
+    
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_epochs</span><span class="p">):</span>
+        <span class="n">transition</span><span class="p">:</span> <span class="n">Transition</span>
+        <span class="k">for</span> <span class="n">transition</span> <span class="ow">in</span> <span class="n">replay_buffer_loader</span><span class="p">:</span>
+            
+            <span class="n">batch_states</span> <span class="o">=</span> <span class="n">transition</span><span class="o">.</span><span class="n">state</span>
+            <span class="n">batch_actions</span> <span class="o">=</span> <span class="n">transition</span><span class="o">.</span><span class="n">action</span>
+            
+            <span class="n">log_porbs</span> <span class="o">=</span> <span class="n">actor</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">batch_actions</span><span class="p">,</span> <span class="n">batch_states</span><span class="p">)</span>
+            <span class="n">batch_log_probs</span> <span class="o">=</span> <span class="n">transition</span><span class="o">.</span><span class="n">log_prob</span>
+            
+            <span class="n">ratios</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_porbs</span> <span class="o">-</span> <span class="n">batch_log_probs</span><span class="p">)</span>
+            
+            <span class="n">batch_rewards_to_go</span> <span class="o">=</span> <span class="n">transition</span><span class="o">.</span><span class="n">reward_to_go</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+            <span class="n">state_values</span> <span class="o">=</span> <span class="n">critic</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">batch_states</span><span class="p">)</span>
+            <span class="n">advantages</span> <span class="o">=</span> <span class="n">batch_rewards_to_go</span> <span class="o">-</span> <span class="n">state_values</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+        
+            <span class="n">surr1</span> <span class="o">=</span> <span class="n">ratios</span> <span class="o">*</span> <span class="n">advantages</span>
+            <span class="n">surr2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span>
+                <span class="n">ratios</span><span class="p">,</span>
+                <span class="mi">1</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">,</span>
+                <span class="mi">1</span> <span class="o">+</span> <span class="n">epsilon</span>
+            <span class="p">)</span> <span class="o">*</span> <span class="n">advantages</span>
+            
+            <span class="n">actor_loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">surr1</span><span class="p">,</span> <span class="n">surr2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            
+            <span class="c1"># Update actor</span>
+            <span class="n">actor_opt</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+            <span class="n">actor_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="n">actor_opt</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            
+            
+            <span class="n">critic_loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">batch_rewards_to_go</span><span class="p">,</span> <span class="n">state_values</span><span class="p">)</span>
+
+            <span class="c1"># Update critic</span>
+            <span class="n">critic_opt</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+            <span class="n">critic_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="n">critic_opt</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">PPOConfig</span><span class="p">:</span>
+    
+    <span class="c1"># Total number of epochs of the PPO algorithm</span>
+    <span class="n">n_epochs</span><span class="p">:</span> <span class="nb">int</span>
+    
+    <span class="n">replay_buffer_capacity</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">max_n_timesteps_per_episode</span><span class="p">:</span> <span class="nb">int</span>
+    
+    <span class="c1"># Discount factor</span>
+    <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span>
+    
+    <span class="c1"># Batch size of the data loader</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span>
+    
+    <span class="c1"># Number of epochs to update actor and critc networks</span>
+    <span class="n">n_epochs_for_actor_critic</span><span class="p">:</span> <span class="nb">int</span>
+    
+    <span class="c1"># Learning rate of the Adam optimizers</span>
+    <span class="n">lr</span><span class="p">:</span> <span class="nb">float</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="ppo-class">
+<h2>PPO Class<a class="headerlink" href="#ppo-class" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PPO</span><span class="p">:</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> 
+            <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">,</span>
+            <span class="n">config</span><span class="p">:</span> <span class="n">PPOConfig</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env</span> <span class="o">=</span> <span class="n">env</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="n">state_dim</span> <span class="o">=</span> <span class="n">get_state_dim</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+        <span class="n">action_spec</span> <span class="o">=</span> <span class="n">ActionSpec</span><span class="o">.</span><span class="n">from_env</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+        
+        <span class="c1"># Actor and critic networks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_actor</span> <span class="o">=</span> <span class="n">Actor</span><span class="p">(</span><span class="n">state_dim</span><span class="p">,</span> <span class="n">action_spec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_critic</span> <span class="o">=</span> <span class="n">Critic</span><span class="p">(</span><span class="n">state_dim</span><span class="p">)</span>
+        
+        <span class="c1"># Optimizers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_actor_opt</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_actor</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">lr</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_critic_opt</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_critic</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">lr</span><span class="p">)</span>
+        
+        <span class="c1"># Replay buffer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_replay_buffer</span> <span class="o">=</span> <span class="n">ReplayBuffer</span><span class="p">(</span>
+            <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+            <span class="n">capacity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">replay_buffer_capacity</span><span class="p">,</span>
+            <span class="n">max_n_timesteps_per_episode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">max_n_timesteps_per_episode</span><span class="p">,</span>
+            <span class="n">gamma</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">gamma</span>
+        <span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">actor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Actor</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actor</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">critic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Critic</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_critic</span>
+    
+    <span class="k">def</span> <span class="nf">learn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        
+        <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">n_epochs</span><span class="p">):</span>
+            
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PPO epoch: </span><span class="si">{</span><span class="n">epoch</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">avg_episode_rewards</span> <span class="o">=</span> <span class="p">[]</span>
+            
+            <span class="c1"># Collect transitions</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_replay_buffer</span><span class="o">.</span><span class="n">collect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_actor</span><span class="p">)</span>
+            
+            <span class="n">rewards</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">transition</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_replay_buffer</span><span class="p">:</span>
+                <span class="n">rewards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">transition</span><span class="o">.</span><span class="n">reward</span><span class="p">)</span>
+            <span class="n">avg_episode_reward</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rewards</span><span class="p">)</span>
+            <span class="n">avg_episode_rewards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">avg_episode_reward</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;average episode rewards: </span><span class="si">{</span><span class="n">avg_episode_reward</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            
+            <span class="c1"># Create a data loader</span>
+            <span class="n">replay_buffer_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_replay_buffer</span><span class="p">,</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">batch_size</span>
+            <span class="p">)</span>
+            
+            <span class="c1"># Train the actor and critic   </span>
+            <span class="n">update_actor_critic</span><span class="p">(</span>
+                <span class="n">actor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_actor</span><span class="p">,</span>
+                <span class="n">critic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_critic</span><span class="p">,</span>
+                <span class="n">actor_opt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_actor_opt</span><span class="p">,</span>
+                <span class="n">critic_opt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_critic_opt</span><span class="p">,</span>
+                <span class="n">replay_buffer_loader</span><span class="o">=</span><span class="n">replay_buffer_loader</span><span class="p">,</span>
+                <span class="n">n_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">n_epochs_for_actor_critic</span>
+            <span class="p">)</span>
+            
+            <span class="c1"># Clear replay buffer</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_replay_buffer</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+            
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="training">
+<h2>Training<a class="headerlink" href="#training" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ppo</span> <span class="o">=</span> <span class="n">PPO</span><span class="p">(</span>
+    <span class="n">env</span><span class="p">,</span>
+    <span class="n">config</span><span class="o">=</span><span class="n">PPOConfig</span><span class="p">(</span>
+        <span class="n">n_epochs</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">replay_buffer_capacity</span><span class="o">=</span><span class="mi">4800</span><span class="p">,</span>
+        <span class="n">max_n_timesteps_per_episode</span><span class="o">=</span><span class="mi">1600</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
+        <span class="n">n_epochs_for_actor_critic</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">lr</span><span class="o">=</span><span class="mf">0.005</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">ppo</span><span class="o">.</span><span class="n">learn</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-09-20 21:52:55,780 | INFO | PPO epoch: 1
+2023-09-20 21:52:56,741 | INFO | average episode rewards: -6.747819602904104
+2023-09-20 21:52:57,146 | INFO | PPO epoch: 2
+2023-09-20 21:52:58,051 | INFO | average episode rewards: -6.316573743532303
+2023-09-20 21:52:58,364 | INFO | PPO epoch: 3
+2023-09-20 21:52:59,263 | INFO | average episode rewards: -6.2389782488067045
+2023-09-20 21:52:59,552 | INFO | PPO epoch: 4
+2023-09-20 21:53:00,494 | INFO | average episode rewards: -5.820896284379359
+2023-09-20 21:53:00,785 | INFO | PPO epoch: 5
+2023-09-20 21:53:01,693 | INFO | average episode rewards: -6.155192454101085
+2023-09-20 21:53:01,983 | INFO | PPO epoch: 6
+2023-09-20 21:53:02,938 | INFO | average episode rewards: -5.775964028044352
+2023-09-20 21:53:03,269 | INFO | PPO epoch: 7
+2023-09-20 21:53:04,174 | INFO | average episode rewards: -6.097570256096448
+2023-09-20 21:53:04,474 | INFO | PPO epoch: 8
+2023-09-20 21:53:05,380 | INFO | average episode rewards: -5.762353049611248
+2023-09-20 21:53:05,670 | INFO | PPO epoch: 9
+2023-09-20 21:53:06,588 | INFO | average episode rewards: -5.750749808861435
+2023-09-20 21:53:06,919 | INFO | PPO epoch: 10
+2023-09-20 21:53:07,825 | INFO | average episode rewards: -5.925486201277525
+2023-09-20 21:53:08,118 | INFO | PPO epoch: 11
+2023-09-20 21:53:09,020 | INFO | average episode rewards: -5.601728454093864
+2023-09-20 21:53:09,309 | INFO | PPO epoch: 12
+2023-09-20 21:53:10,250 | INFO | average episode rewards: -5.511589115259449
+2023-09-20 21:53:10,539 | INFO | PPO epoch: 13
+2023-09-20 21:53:11,452 | INFO | average episode rewards: -5.474337167761982
+2023-09-20 21:53:11,741 | INFO | PPO epoch: 14
+2023-09-20 21:53:12,655 | INFO | average episode rewards: -5.440881237263256
+2023-09-20 21:53:12,985 | INFO | PPO epoch: 15
+2023-09-20 21:53:13,891 | INFO | average episode rewards: -4.958294095323166
+2023-09-20 21:53:14,178 | INFO | PPO epoch: 16
+2023-09-20 21:53:15,096 | INFO | average episode rewards: -5.562900696759878
+2023-09-20 21:53:15,381 | INFO | PPO epoch: 17
+2023-09-20 21:53:16,324 | INFO | average episode rewards: -4.6454148031388405
+2023-09-20 21:53:16,621 | INFO | PPO epoch: 18
+2023-09-20 21:53:17,524 | INFO | average episode rewards: -5.059112303784164
+2023-09-20 21:53:17,809 | INFO | PPO epoch: 19
+2023-09-20 21:53:18,712 | INFO | average episode rewards: -4.829879286839403
+2023-09-20 21:53:19,039 | INFO | PPO epoch: 20
+2023-09-20 21:53:19,941 | INFO | average episode rewards: -5.261179262379331
+2023-09-20 21:53:20,227 | INFO | PPO epoch: 21
+2023-09-20 21:53:21,128 | INFO | average episode rewards: -4.70586360446199
+2023-09-20 21:53:21,414 | INFO | PPO epoch: 22
+2023-09-20 21:53:22,314 | INFO | average episode rewards: -4.846271023066891
+2023-09-20 21:53:22,641 | INFO | PPO epoch: 23
+2023-09-20 21:53:23,542 | INFO | average episode rewards: -4.756648877085436
+2023-09-20 21:53:23,828 | INFO | PPO epoch: 24
+2023-09-20 21:53:24,739 | INFO | average episode rewards: -4.799191891984065
+2023-09-20 21:53:25,024 | INFO | PPO epoch: 25
+2023-09-20 21:53:25,964 | INFO | average episode rewards: -4.601923387416849
+2023-09-20 21:53:26,255 | INFO | PPO epoch: 26
+2023-09-20 21:53:27,169 | INFO | average episode rewards: -4.643306673489573
+2023-09-20 21:53:27,458 | INFO | PPO epoch: 27
+2023-09-20 21:53:28,362 | INFO | average episode rewards: -4.470343861387041
+2023-09-20 21:53:28,691 | INFO | PPO epoch: 28
+2023-09-20 21:53:29,594 | INFO | average episode rewards: -4.582000942095064
+2023-09-20 21:53:29,880 | INFO | PPO epoch: 29
+2023-09-20 21:53:30,774 | INFO | average episode rewards: -4.273313377775145
+2023-09-20 21:53:31,061 | INFO | PPO epoch: 30
+2023-09-20 21:53:31,957 | INFO | average episode rewards: -4.553994887473372
+2023-09-20 21:53:32,287 | INFO | PPO epoch: 31
+2023-09-20 21:53:33,188 | INFO | average episode rewards: -4.455540902921747
+2023-09-20 21:53:33,474 | INFO | PPO epoch: 32
+2023-09-20 21:53:34,378 | INFO | average episode rewards: -4.357206906682559
+2023-09-20 21:53:34,672 | INFO | PPO epoch: 33
+2023-09-20 21:53:35,646 | INFO | average episode rewards: -4.4295739324388475
+2023-09-20 21:53:35,938 | INFO | PPO epoch: 34
+2023-09-20 21:53:36,868 | INFO | average episode rewards: -4.5332748804726695
+2023-09-20 21:53:37,154 | INFO | PPO epoch: 35
+2023-09-20 21:53:38,057 | INFO | average episode rewards: -4.1536973902323036
+2023-09-20 21:53:38,384 | INFO | PPO epoch: 36
+2023-09-20 21:53:39,293 | INFO | average episode rewards: -4.120210823890338
+2023-09-20 21:53:39,577 | INFO | PPO epoch: 37
+2023-09-20 21:53:40,478 | INFO | average episode rewards: -3.9294621183180456
+2023-09-20 21:53:40,763 | INFO | PPO epoch: 38
+2023-09-20 21:53:41,706 | INFO | average episode rewards: -4.109125336567277
+2023-09-20 21:53:41,995 | INFO | PPO epoch: 39
+2023-09-20 21:53:42,896 | INFO | average episode rewards: -4.095667173918265
+2023-09-20 21:53:43,181 | INFO | PPO epoch: 40
+2023-09-20 21:53:44,080 | INFO | average episode rewards: -3.9604014641110172
+2023-09-20 21:53:44,370 | INFO | PPO epoch: 41
+2023-09-20 21:53:45,334 | INFO | average episode rewards: -3.9681369769084154
+2023-09-20 21:53:45,624 | INFO | PPO epoch: 42
+2023-09-20 21:53:46,539 | INFO | average episode rewards: -3.9919226589441967
+2023-09-20 21:53:46,829 | INFO | PPO epoch: 43
+2023-09-20 21:53:47,729 | INFO | average episode rewards: -3.7667089108295126
+2023-09-20 21:53:48,016 | INFO | PPO epoch: 44
+2023-09-20 21:53:48,951 | INFO | average episode rewards: -3.822356591898337
+2023-09-20 21:53:49,236 | INFO | PPO epoch: 45
+2023-09-20 21:53:50,138 | INFO | average episode rewards: -3.8395933704235023
+2023-09-20 21:53:50,423 | INFO | PPO epoch: 46
+2023-09-20 21:53:51,333 | INFO | average episode rewards: -3.629117225859454
+2023-09-20 21:53:51,661 | INFO | PPO epoch: 47
+2023-09-20 21:53:52,566 | INFO | average episode rewards: -3.6226522508789922
+2023-09-20 21:53:52,854 | INFO | PPO epoch: 48
+2023-09-20 21:53:53,756 | INFO | average episode rewards: -3.62927627033499
+2023-09-20 21:53:54,042 | INFO | PPO epoch: 49
+2023-09-20 21:53:54,960 | INFO | average episode rewards: -3.527059275072082
+2023-09-20 21:53:55,290 | INFO | PPO epoch: 50
+2023-09-20 21:53:56,200 | INFO | average episode rewards: -3.4001140875793916
+2023-09-20 21:53:56,488 | INFO | PPO epoch: 51
+2023-09-20 21:53:57,403 | INFO | average episode rewards: -3.3653413486687715
+2023-09-20 21:53:57,694 | INFO | PPO epoch: 52
+2023-09-20 21:53:58,662 | INFO | average episode rewards: -3.1422691520306882
+2023-09-20 21:53:58,951 | INFO | PPO epoch: 53
+2023-09-20 21:53:59,857 | INFO | average episode rewards: -3.1413888338686533
+2023-09-20 21:54:00,144 | INFO | PPO epoch: 54
+2023-09-20 21:54:01,051 | INFO | average episode rewards: -3.040975341277047
+2023-09-20 21:54:01,379 | INFO | PPO epoch: 55
+2023-09-20 21:54:02,292 | INFO | average episode rewards: -2.8722041800550375
+2023-09-20 21:54:02,578 | INFO | PPO epoch: 56
+2023-09-20 21:54:03,483 | INFO | average episode rewards: -2.4377147292501165
+2023-09-20 21:54:03,767 | INFO | PPO epoch: 57
+2023-09-20 21:54:04,724 | INFO | average episode rewards: -2.221236173105737
+2023-09-20 21:54:05,012 | INFO | PPO epoch: 58
+2023-09-20 21:54:05,914 | INFO | average episode rewards: -1.300190598236507
+2023-09-20 21:54:06,212 | INFO | PPO epoch: 59
+2023-09-20 21:54:07,132 | INFO | average episode rewards: -1.2008209701846753
+2023-09-20 21:54:07,417 | INFO | PPO epoch: 60
+2023-09-20 21:54:08,359 | INFO | average episode rewards: -1.1795160879497761
+2023-09-20 21:54:08,644 | INFO | PPO epoch: 61
+2023-09-20 21:54:09,536 | INFO | average episode rewards: -1.2298895118282602
+2023-09-20 21:54:09,822 | INFO | PPO epoch: 62
+2023-09-20 21:54:10,722 | INFO | average episode rewards: -1.0243352197469442
+2023-09-20 21:54:11,006 | INFO | PPO epoch: 63
+2023-09-20 21:54:11,943 | INFO | average episode rewards: -1.0112639870947373
+2023-09-20 21:54:12,230 | INFO | PPO epoch: 64
+2023-09-20 21:54:13,135 | INFO | average episode rewards: -1.1049172124611217
+2023-09-20 21:54:13,420 | INFO | PPO epoch: 65
+2023-09-20 21:54:14,322 | INFO | average episode rewards: -1.2974646454123118
+2023-09-20 21:54:14,664 | INFO | PPO epoch: 66
+2023-09-20 21:54:15,569 | INFO | average episode rewards: -0.8948918131835875
+2023-09-20 21:54:15,855 | INFO | PPO epoch: 67
+2023-09-20 21:54:16,765 | INFO | average episode rewards: -0.9641602832932524
+2023-09-20 21:54:17,051 | INFO | PPO epoch: 68
+2023-09-20 21:54:17,952 | INFO | average episode rewards: -0.9896057131147923
+2023-09-20 21:54:18,281 | INFO | PPO epoch: 69
+2023-09-20 21:54:19,177 | INFO | average episode rewards: -0.9332601902788625
+2023-09-20 21:54:19,462 | INFO | PPO epoch: 70
+2023-09-20 21:54:20,360 | INFO | average episode rewards: -0.9399279851209154
+2023-09-20 21:54:20,646 | INFO | PPO epoch: 71
+2023-09-20 21:54:21,593 | INFO | average episode rewards: -0.9938175324385254
+2023-09-20 21:54:21,879 | INFO | PPO epoch: 72
+2023-09-20 21:54:22,779 | INFO | average episode rewards: -0.7964560904079345
+2023-09-20 21:54:23,063 | INFO | PPO epoch: 73
+2023-09-20 21:54:23,965 | INFO | average episode rewards: -0.9734332301783976
+2023-09-20 21:54:24,293 | INFO | PPO epoch: 74
+2023-09-20 21:54:25,206 | INFO | average episode rewards: -0.8396315012248815
+2023-09-20 21:54:25,491 | INFO | PPO epoch: 75
+2023-09-20 21:54:26,400 | INFO | average episode rewards: -0.8318261726123481
+2023-09-20 21:54:26,691 | INFO | PPO epoch: 76
+2023-09-20 21:54:27,643 | INFO | average episode rewards: -0.8939341701070905
+2023-09-20 21:54:27,928 | INFO | PPO epoch: 77
+2023-09-20 21:54:28,848 | INFO | average episode rewards: -0.9107139459399188
+2023-09-20 21:54:29,133 | INFO | PPO epoch: 78
+2023-09-20 21:54:30,038 | INFO | average episode rewards: -0.8692642914106468
+2023-09-20 21:54:30,324 | INFO | PPO epoch: 79
+2023-09-20 21:54:31,267 | INFO | average episode rewards: -0.929232069036097
+2023-09-20 21:54:31,552 | INFO | PPO epoch: 80
+2023-09-20 21:54:32,457 | INFO | average episode rewards: -0.9377932852924112
+2023-09-20 21:54:32,743 | INFO | PPO epoch: 81
+2023-09-20 21:54:33,648 | INFO | average episode rewards: -0.7313329626605298
+2023-09-20 21:54:33,933 | INFO | PPO epoch: 82
+2023-09-20 21:54:34,878 | INFO | average episode rewards: -0.9150710433728836
+2023-09-20 21:54:35,169 | INFO | PPO epoch: 83
+2023-09-20 21:54:36,084 | INFO | average episode rewards: -0.792542909582304
+2023-09-20 21:54:36,375 | INFO | PPO epoch: 84
+2023-09-20 21:54:37,288 | INFO | average episode rewards: -0.895361102316542
+2023-09-20 21:54:37,617 | INFO | PPO epoch: 85
+2023-09-20 21:54:38,505 | INFO | average episode rewards: -1.0188418821655705
+2023-09-20 21:54:38,795 | INFO | PPO epoch: 86
+2023-09-20 21:54:39,696 | INFO | average episode rewards: -0.9650505008639884
+2023-09-20 21:54:39,982 | INFO | PPO epoch: 87
+2023-09-20 21:54:40,884 | INFO | average episode rewards: -0.7159704743997463
+2023-09-20 21:54:41,210 | INFO | PPO epoch: 88
+2023-09-20 21:54:42,118 | INFO | average episode rewards: -0.866626255229999
+2023-09-20 21:54:42,405 | INFO | PPO epoch: 89
+2023-09-20 21:54:43,306 | INFO | average episode rewards: -0.8378647697060533
+2023-09-20 21:54:43,592 | INFO | PPO epoch: 90
+2023-09-20 21:54:44,541 | INFO | average episode rewards: -0.7042977937820154
+2023-09-20 21:54:44,828 | INFO | PPO epoch: 91
+2023-09-20 21:54:45,730 | INFO | average episode rewards: -1.0255957595780614
+2023-09-20 21:54:46,031 | INFO | PPO epoch: 92
+2023-09-20 21:54:46,948 | INFO | average episode rewards: -0.9271403267794733
+2023-09-20 21:54:47,276 | INFO | PPO epoch: 93
+2023-09-20 21:54:48,184 | INFO | average episode rewards: -1.0815551124131755
+2023-09-20 21:54:48,468 | INFO | PPO epoch: 94
+2023-09-20 21:54:49,370 | INFO | average episode rewards: -0.6528609265609956
+2023-09-20 21:54:49,657 | INFO | PPO epoch: 95
+2023-09-20 21:54:50,600 | INFO | average episode rewards: -0.8771459179361705
+2023-09-20 21:54:50,886 | INFO | PPO epoch: 96
+2023-09-20 21:54:51,784 | INFO | average episode rewards: -0.7905090318632411
+2023-09-20 21:54:52,070 | INFO | PPO epoch: 97
+2023-09-20 21:54:52,972 | INFO | average episode rewards: -0.6948451624040723
+2023-09-20 21:54:53,257 | INFO | PPO epoch: 98
+2023-09-20 21:54:54,203 | INFO | average episode rewards: -0.7900952480027663
+2023-09-20 21:54:54,501 | INFO | PPO epoch: 99
+2023-09-20 21:54:55,414 | INFO | average episode rewards: -0.8600416147734973
+2023-09-20 21:54:55,702 | INFO | PPO epoch: 100
+2023-09-20 21:54:56,605 | INFO | average episode rewards: -0.8103320320828827
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">ppo</span><span class="o">.</span><span class="n">actor</span><span class="p">,</span> <span class="s2">&quot;../models/actor.pth&quot;</span><span class="p">)</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">ppo</span><span class="o">.</span><span class="n">critic</span><span class="p">,</span> <span class="s2">&quot;../models/critic.pth&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="loading-models">
+<h2>Loading Models<a class="headerlink" href="#loading-models" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">actor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;../models/actor.pth&quot;</span><span class="p">)</span>
+<span class="n">critic</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;../models/critic.pth&quot;</span><span class="p">)</span>
+<span class="n">actor</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="n">critic</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">actor</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">critic</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Actor(
+  (mlp): MLP(
+    (layer1): Linear(in_features=3, out_features=64, bias=True)
+    (layer2): Linear(in_features=64, out_features=64, bias=True)
+    (layer3): Linear(in_features=64, out_features=1, bias=True)
+  )
+)
+Critic(
+  (mlp): MLP(
+    (layer1): Linear(in_features=3, out_features=64, bias=True)
+    (layer2): Linear(in_features=64, out_features=64, bias=True)
+    (layer3): Linear(in_features=64, out_features=1, bias=True)
+  )
+)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="performance-of-the-trained-agent">
+<h2>Performance of the Trained Agent<a class="headerlink" href="#performance-of-the-trained-agent" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
+    <span class="s2">&quot;Pendulum-v1&quot;</span><span class="p">,</span> 
+    <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span>
+<span class="p">)</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">RecordVideo</span><span class="p">(</span>
+    <span class="n">env</span><span class="p">,</span> 
+    <span class="n">video_folder</span><span class="o">=</span><span class="s2">&quot;../videos&quot;</span><span class="p">,</span>
+    <span class="n">name_prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;ppo-</span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+
+<span class="n">state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">count</span><span class="p">():</span>
+    
+    <span class="c1"># Select an action</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">actor</span><span class="o">.</span><span class="n">select_action</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    
+    <span class="c1"># Interactive with the environment</span>
+    <span class="n">next_state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">is_terminated</span><span class="p">,</span> <span class="n">is_truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+    
+    <span class="n">is_done</span> <span class="o">=</span> <span class="n">is_terminated</span> <span class="ow">or</span> <span class="n">is_truncated</span>
+    
+    <span class="k">if</span> <span class="n">is_done</span><span class="p">:</span>
+        <span class="k">break</span>
+    
+     <span class="c1"># Step to the next state</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">next_state</span>
+
+<span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Moviepy - Building video /Users/isaac/Developer/py-projects/linguAML/book/videos/ppo-Pendulum-v1-episode-0.mp4.
+Moviepy - Writing video /Users/isaac/Developer/py-projects/linguAML/book/videos/ppo-Pendulum-v1-episode-0.mp4
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                                                                
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Moviepy - Done !
+Moviepy - video ready /Users/isaac/Developer/py-projects/linguAML/book/videos/ppo-Pendulum-v1-episode-0.mp4
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./preliminaries"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Preliminaries</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="lstm.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">LSTM</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ppo-algorithm">PPO Algorithm</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#environment-specifications">Environment Specifications</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#actor-and-critic-models">Actor and Critic Models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transition-data">Transition Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#updating-actor-and-critic">Updating Actor and Critic</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ppo-class">PPO Class</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#training">Training</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-models">Loading Models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-of-the-trained-agent">Performance of the Trained Agent</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Isaac FEI
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

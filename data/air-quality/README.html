@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>&lt;no title&gt; &#8212; LinguAML</title>
+    <title>Air Quality &#8212; LinguAML</title>
   
   
   
@@ -344,7 +344,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1><no title></h1>
+    <h1>Air Quality</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -353,9 +353,10 @@ document.write(`
                 <h2> Contents </h2>
             </div>
             <nav aria-label="Page">
-                <ul class="simple visible nav section-nav flex-column">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dataset-information">Dataset Information</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-variable-information">Additional Variable Information</a></li>
 </ul>
-
             </nav>
         </div>
     </div>
@@ -366,7 +367,35 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  
+  <section class="tex2jax_ignore mathjax_ignore" id="air-quality">
+<h1>Air Quality<a class="headerlink" href="#air-quality" title="Permalink to this heading">#</a></h1>
+<section id="dataset-information">
+<h2>Dataset Information<a class="headerlink" href="#dataset-information" title="Permalink to this heading">#</a></h2>
+<p>The dataset contains 9358 instances of hourly averaged responses from an array of 5 metal oxide chemical sensors embedded in an Air Quality Chemical Multisensor Device. The device was located on the field in a significantly polluted area, at road level,within an Italian city. Data were recorded from March 2004 to February 2005 (one year)representing the longest freely available recordings of on field deployed air quality chemical sensor devices responses. Ground Truth hourly averaged concentrations for CO, Non Metanic Hydrocarbons, Benzene, Total Nitrogen Oxides (NOx) and Nitrogen Dioxide (NO2)  and were provided by a co-located reference certified analyzer. Evidences of cross-sensitivities as well as both concept and sensor drifts are present as described in De Vito et al., Sens. And Act. B, Vol. 129,2,2008 (citation required) eventually affecting sensors concentration estimation capabilities. Missing values are tagged with -200 value.
+This dataset can be used exclusively for research purposes. Commercial purposes are fully excluded.</p>
+</section>
+<section id="additional-variable-information">
+<h2>Additional Variable Information<a class="headerlink" href="#additional-variable-information" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Date	(DD/MM/YYYY)</p></li>
+<li><p>Time	(HH.MM.SS)</p></li>
+<li><p>True hourly averaged concentration CO in mg/m^3  (reference analyzer)</p></li>
+<li><p>PT08.S1 (tin oxide)  hourly averaged sensor response (nominally  CO targeted)</p></li>
+<li><p>True hourly averaged overall Non Metanic HydroCarbons concentration in microg/m^3 (reference analyzer)</p></li>
+<li><p>True hourly averaged Benzene concentration  in microg/m^3 (reference analyzer)</p></li>
+<li><p>PT08.S2 (titania) hourly averaged sensor response (nominally NMHC targeted)</p></li>
+<li><p>True hourly averaged NOx concentration  in ppb (reference analyzer)</p></li>
+<li><p>PT08.S3 (tungsten oxide) hourly averaged sensor response (nominally NOx targeted)</p></li>
+<li><p>True hourly averaged NO2 concentration in microg/m^3 (reference analyzer)</p></li>
+<li><p>PT08.S4 (tungsten oxide) hourly averaged sensor response (nominally NO2 targeted)</p></li>
+<li><p>PT08.S5 (indium oxide) hourly averaged sensor response (nominally O3 targeted)</p></li>
+<li><p>Temperature in Â°C</p></li>
+<li><p>Relative Humidity (%)</p></li>
+<li><p>AH Absolute Humidity</p></li>
+</ul>
+</section>
+</section>
+
     <script type="text/x-thebe-config">
     {
         requestKernel: true,
@@ -415,9 +444,10 @@ document.write(`
     <i class="fa-solid fa-list"></i> Contents
   </div>
   <nav class="bd-toc-nav page-toc">
-    <ul class="simple visible nav section-nav flex-column">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dataset-information">Dataset Information</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-variable-information">Additional Variable Information</a></li>
 </ul>
-
   </nav></div>
 
 </div></div>

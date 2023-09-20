@@ -361,6 +361,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#imports">Imports</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lstm-cell">LSTM Cell</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">LSTM</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stacked-lstm">Stacked LSTM</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#air-quality-prediction-using-lstm">Air Quality Prediction Using LSTM</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data">Data</a></li>
 </ul>
@@ -745,6 +746,148 @@ tensor([[ 0.0362, -0.0598]])
 </div>
 </div>
 </section>
+<section id="stacked-lstm">
+<h2>Stacked LSTM<a class="headerlink" href="#stacked-lstm" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stacked_lstm</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LSTM</span><span class="p">(</span>
+    <span class="n">input_size</span><span class="o">=</span><span class="n">d</span><span class="p">,</span>
+    <span class="n">hidden_size</span><span class="o">=</span><span class="n">k</span><span class="p">,</span>
+    <span class="n">num_layers</span><span class="o">=</span><span class="mi">2</span>
+<span class="p">)</span>
+
+<span class="n">stacked_lstm</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>LSTM(3, 2, num_layers=2)
+</pre></div>
+</div>
+</div>
+</div>
+<p>The structure of this stacked LSTM is as follows:</p>
+<p><a class="reference internal" href="../_images/stacked-lstm.png"><img alt="../_images/stacked-lstm.png" src="../_images/stacked-lstm.png" style="width: 500px;" /></a></img></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lstm_cell1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LSTMCell</span><span class="p">(</span>
+    <span class="n">input_size</span><span class="o">=</span><span class="n">d</span><span class="p">,</span>
+    <span class="n">hidden_size</span><span class="o">=</span><span class="n">k</span>
+<span class="p">)</span>
+
+<span class="n">lstm_cell2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LSTMCell</span><span class="p">(</span>
+    <span class="n">input_size</span><span class="o">=</span><span class="n">k</span><span class="p">,</span>
+    <span class="n">hidden_size</span><span class="o">=</span><span class="n">k</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">state_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">lstm_cell1</span><span class="o">.</span><span class="n">state_dict</span><span class="p">():</span>
+    <span class="n">new_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">_l0&quot;</span>
+    <span class="n">state_dict</span><span class="p">[</span><span class="n">new_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">lstm_cell1</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()[</span><span class="n">key</span><span class="p">]</span>
+    
+<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">lstm_cell2</span><span class="o">.</span><span class="n">state_dict</span><span class="p">():</span>
+    <span class="n">new_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">_l1&quot;</span>
+    <span class="n">state_dict</span><span class="p">[</span><span class="n">new_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">lstm_cell2</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()[</span><span class="n">key</span><span class="p">]</span>
+    
+<span class="n">stacked_lstm</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;All keys matched successfully&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">h_cell1</span><span class="p">,</span> <span class="n">c_cell1</span> <span class="o">=</span> <span class="n">h0</span><span class="p">,</span> <span class="n">c0</span>
+    <span class="n">h_cell2</span><span class="p">,</span> <span class="n">c_cell2</span> <span class="o">=</span> <span class="n">h0</span><span class="p">,</span> <span class="n">c0</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">:</span>
+        <span class="n">h_cell1</span><span class="p">,</span> <span class="n">c_cell1</span> <span class="o">=</span> <span class="n">lstm_cell1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">h_cell1</span><span class="p">,</span> <span class="n">c_cell1</span><span class="p">))</span>
+        <span class="n">h_cell2</span><span class="p">,</span> <span class="n">c_cell2</span> <span class="o">=</span> <span class="n">lstm_cell2</span><span class="p">(</span><span class="n">h_cell1</span><span class="p">,</span> <span class="p">(</span><span class="n">h_cell2</span><span class="p">,</span> <span class="n">c_cell2</span><span class="p">))</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">h_cell2</span>
+
+<span class="n">out</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>tensor([ 0.1681, -0.0548])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">out</span><span class="p">,</span> <span class="p">(</span><span class="n">ht</span><span class="p">,</span> <span class="n">ct</span><span class="p">)</span> <span class="o">=</span> <span class="n">stacked_lstm</span><span class="p">(</span>
+        <span class="n">x_seq</span><span class="p">,</span> 
+        <span class="p">(</span>
+            <span class="n">h0</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> 
+            <span class="n">c0</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+<span class="n">out</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>tensor([[ 0.2394, -0.1301],
+        [ 0.1795, -0.1011],
+        [ 0.1759, -0.0746],
+        [ 0.1596, -0.0619],
+        [ 0.1681, -0.0548]])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ht</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>tensor([[ 0.1617, -0.0132],
+        [ 0.1681, -0.0548]])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">h_cell1</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>tensor([ 0.1617, -0.0132])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">h_cell2</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>tensor([ 0.1681, -0.0548])
+</pre></div>
+</div>
+</div>
+</div>
+</section>
 <section id="air-quality-prediction-using-lstm">
 <h2>Air Quality Prediction Using LSTM<a class="headerlink" href="#air-quality-prediction-using-lstm" title="Permalink to this heading">#</a></h2>
 <section id="data">
@@ -934,6 +1077,7 @@ tensor([[ 0.0362, -0.0598]])
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#imports">Imports</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lstm-cell">LSTM Cell</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">LSTM</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stacked-lstm">Stacked LSTM</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#air-quality-prediction-using-lstm">Air Quality Prediction Using LSTM</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data">Data</a></li>
 </ul>
