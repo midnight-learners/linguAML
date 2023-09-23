@@ -13,16 +13,23 @@
 # Python
 **/__pycache__
 
+# Built dist and egg-info files
+/dist
+/*.egg-info
+
 # Jupyter Notebook
 **/.ipynb_checkpoints
 
 # Jupyter Book
 **/_build
 
-# playground
+# Playground
 /playground
 
-# auxiliary files when compiling LaTeX 
+# Report directory
+/report
+
+# Auxiliary files when compiling LaTeX 
 **/*.aux
 **/*.bbl
 **/*.bcf

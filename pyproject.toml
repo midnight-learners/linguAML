@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["book", "playground", "report"]  # empty by default
+namespaces = false  # true by default
+
+[project]
+name = "linguaml"
+version = "0.0.1"
+authors = [
+    {name = "Isaac Fei", email = "isaac.omega.fei@gmail.com"},
+]
+description = "A project that combines the power of Large Language Models (LLMs) with traditional automated machine learning (AML) techniques."
+readme = 'README.md'
+requires-python = ">=3.11"
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/Isaac-Fate/LinguAML"
+
