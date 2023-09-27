@@ -26,6 +26,12 @@
 # Playground
 /playground
 
+# Large data directory
+/data
+
+# Configuration and secret files
+/config.toml
+
 # Report directory
 /report
 

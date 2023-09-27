@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.utils import Bunch
 from sklearn.metrics import accuracy_score
 from .data.utils import train_valid_test_split
-from .families import Family
+from .family import Family
 
 class Env:
     
