@@ -5,3 +5,15 @@ LinguAML is an innovative project that combines the power of Large Language Mode
 ## Development Notes
 
 Check the development notes 👉 [here](https://isaac-fate.github.io/LinguAML/intro.html).
+
+## Dependencies
+
+### Anaconda Environment
+
+The Anaconda environment is specified in the file environment.yml.
+
+One can create the environment via the command:
+
+```sh
+conda env create -f environment.yml
+```
