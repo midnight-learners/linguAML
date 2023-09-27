@@ -34,7 +34,7 @@ class HpConfig(BaseModel, ABC):
         """Data type of the hyperparameter.
         """
         
-        return cls.__fields__.get(name).type_
+        return cls.model_fields.get(name).annotation
     
     @classmethod
     def from_action(

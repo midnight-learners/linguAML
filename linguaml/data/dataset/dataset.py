@@ -4,7 +4,7 @@ from pydantic import BaseModel, ConfigDict
 import json
 import pandas as pd
 from ucimlrepo import fetch_ucirepo
-from ...utils import mkdir_if_not_exists
+from ...utils import mkdir_if_not_exists, dasherize
 from ...config import settings
 from .description import DatasetDescription
 
@@ -61,7 +61,8 @@ class Dataset(BaseModel):
             return dataset
         
         # Dataset directory
-        dataset_dir = mkdir_if_not_exists(data_dir.joinpath(name))
+        dataset_dir_name = dasherize(description.name)
+        dataset_dir = mkdir_if_not_exists(data_dir.joinpath(dataset_dir_name))
 
         # Save metadata
         dataset_metadata_filepath = dataset_dir.joinpath("metadata").with_suffix(".json")

@@ -20,8 +20,8 @@ class Family(Enum):
     
     def define_model(
             self, 
-            hp_config: Optional[HpConfig] = None,
             *,
+            hp_config: Optional[HpConfig] = None,
             action: Optional[Iterable[float]] = None,
             hp_bounds: Optional[dict[str, tuple]] = None,
             **kwargs

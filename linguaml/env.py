@@ -1,9 +1,9 @@
 from typing import Optional, Iterable
 from collections import deque
 import numpy as np
-from sklearn.utils import Bunch
 from sklearn.metrics import accuracy_score
 from .data.utils import train_valid_test_split
+from .data.dataset import Dataset
 from .family import Family
 
 class Env:
@@ -12,7 +12,7 @@ class Env:
             self,
             family: Family,
             hp_bounds: dict[str, tuple],
-            dataset: Bunch,
+            dataset: Dataset,
             *,
             valid_size: float = 0.2,
             test_size: float = 0.2,
@@ -27,8 +27,8 @@ class Env:
         self._hp_bounds = hp_bounds
         
         # Data
-        X = dataset.data
-        y = dataset.target
+        X = dataset.features.to_numpy()
+        y = dataset.targets.to_numpy().flatten()
         
         # Random state
         self._random_state = random_state

@@ -55,7 +55,7 @@ class BaseFamily(ABC):
     def _define_model_from_hp_config(cls, hp_config: HpConfig) -> Predictor:
         
         # Create a model instance by unpacking the HP dict
-        model = cls.model_type(**hp_config.dict())
+        model = cls.model_type(**hp_config.model_dump())
         
         return model
     
