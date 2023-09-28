@@ -1,7 +1,7 @@
 from typing import Self
 from pathlib import Path
 import tomllib
-from pydantic_settings import BaseSettings
+from pydantic import BaseSettings
 from xpyutils import singleton
 from .utils import mkdir_if_not_exists
 

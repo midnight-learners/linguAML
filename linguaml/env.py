@@ -1,10 +1,11 @@
 from typing import Optional, Iterable
 from collections import deque
 import numpy as np
+from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score
 from .data.utils import train_valid_test_split
 from .data.dataset import Dataset
-from .family import Family
+from .families import Family
 
 class Env:
     
@@ -29,6 +30,8 @@ class Env:
         # Data
         X = dataset.features.to_numpy()
         y = dataset.targets.to_numpy().flatten()
+        label_encoder = LabelEncoder()
+        y = label_encoder.fit_transform(y)
         
         # Random state
         self._random_state = random_state

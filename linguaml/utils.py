@@ -16,7 +16,7 @@ def dasherize(text: str) -> str:
     text = text.lower()
     
     # Replace special characters with whitespaces
-    text = re.sub(r"[,.;:'\"\\|]", " ", text)
+    text = re.sub(r"[^a-z0-9]", " ", text).strip()
     
     # Replace all whitespaces with dashes
     text = re.sub(r"\s+", "-", text)

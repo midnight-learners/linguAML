@@ -1,22 +1,15 @@
-from typing import Self, Optional, Iterable
-from abc import ABC, abstractmethod
-import numpy as np
+from typing import Optional, Iterable
+from abc import ABC
+from sklearn.base import ClassifierMixin, RegressorMixin
 from ..hp import HpConfig
 
-class Predictor(ABC):
-    
-    @abstractmethod
-    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
-        pass
-    
-    @abstractmethod
-    def predict(self, X: np.ndarray) -> np.ndarray:
-        pass
+Model = ClassifierMixin | RegressorMixin
+ModelType = type[ClassifierMixin | RegressorMixin]
 
 class BaseFamily(ABC):
     
-    model_type: type
-    hp_config_type: type
+    model_type: ModelType
+    hp_config_type: type[HpConfig]
     
     @classmethod
     def hp(cls) -> type:
@@ -31,12 +24,12 @@ class BaseFamily(ABC):
     @classmethod
     def define_model(
             cls, 
-            hp_config: Optional[HpConfig] = None,
             *,
+            hp_config: Optional[HpConfig] = None,
             action: Optional[Iterable[float]] = None,
             hp_bounds: Optional[dict[str, tuple]] = None,
             **kwargs
-        ) -> Predictor:
+        ) -> Model:
         
         if hp_config is not None:
             model = cls._define_model_from_hp_config(hp_config)
@@ -52,10 +45,13 @@ class BaseFamily(ABC):
         return model
     
     @classmethod
-    def _define_model_from_hp_config(cls, hp_config: HpConfig) -> Predictor:
+    def _define_model_from_hp_config(
+            cls, 
+            hp_config: HpConfig
+        ) -> Model:
         
         # Create a model instance by unpacking the HP dict
-        model = cls.model_type(**hp_config.model_dump())
+        model = cls.model_type(**hp_config.dict())
         
         return model
     
@@ -64,7 +60,7 @@ class BaseFamily(ABC):
             cls, 
             action: Iterable[float],
             hp_bounds: dict[str, tuple]
-        ) -> Predictor:
+        ) -> Model:
         
         hp_config = cls.hp_config_type.from_action(
             action=action,
@@ -77,9 +73,9 @@ class BaseFamily(ABC):
     
 def define_family_type(
         name: str,
-        model_type: type, 
-        hp_config_type: type
-    ) -> type:
+        model_type: ModelType, 
+        hp_config_type: type[HpConfig]
+    ) -> type[BaseFamily]:
     
     return type(
         name,

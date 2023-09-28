@@ -1,6 +1,6 @@
 from typing import Self, Optional
 from pathlib import Path
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 import json
 import pandas as pd
 from ucimlrepo import fetch_ucirepo
@@ -10,10 +10,9 @@ from .description import DatasetDescription
 
 class Dataset(BaseModel):
     
-    model_config = ConfigDict(
-        frozen=True,
-        arbitrary_types_allowed=True
-    )
+    class Config:
+        allow_mutation = False
+        arbitrary_types_allowed = True
     
     description: DatasetDescription
     features: pd.DataFrame
