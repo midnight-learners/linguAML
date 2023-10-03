@@ -1,18 +1,18 @@
 from typing import Optional, Iterable
 from abc import ABC
 from sklearn.base import ClassifierMixin, RegressorMixin
-from ..hp import HpConfig
+from ..hp import HPConfig
 
 Model = ClassifierMixin | RegressorMixin
 ModelType = type[ClassifierMixin | RegressorMixin]
 
-class BaseFamily(ABC):
+class Family(ABC):
     
     model_type: ModelType
-    hp_config_type: type[HpConfig]
+    hp_config_type: type[HPConfig]
     
     @classmethod
-    def hp(cls) -> type:
+    def hp(cls) -> type[HPConfig]:
         
         return cls.hp_config_type
     
@@ -25,7 +25,7 @@ class BaseFamily(ABC):
     def define_model(
             cls, 
             *,
-            hp_config: Optional[HpConfig] = None,
+            hp_config: Optional[HPConfig] = None,
             action: Optional[Iterable[float]] = None,
             hp_bounds: Optional[dict[str, tuple]] = None,
             **kwargs
@@ -47,7 +47,7 @@ class BaseFamily(ABC):
     @classmethod
     def _define_model_from_hp_config(
             cls, 
-            hp_config: HpConfig
+            hp_config: HPConfig
         ) -> Model:
         
         # Create a model instance by unpacking the HP dict
@@ -74,12 +74,12 @@ class BaseFamily(ABC):
 def define_family_type(
         name: str,
         model_type: ModelType, 
-        hp_config_type: type[HpConfig]
-    ) -> type[BaseFamily]:
+        hp_config_type: type[HPConfig]
+    ) -> type[Family]:
     
     return type(
         name,
-        (BaseFamily,),
+        (Family,),
         {
             "model_type": model_type,
             "hp_config_type": hp_config_type

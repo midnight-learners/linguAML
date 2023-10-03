@@ -1,22 +1,62 @@
-from typing import Optional
+from typing import Self, Optional
+from enum import Enum
 from torch import Tensor
 from torch import nn
-from torch.distributions import Distribution, Normal
+from torch.distributions import Distribution, Normal, Cauchy, Beta
+
+class DistributionFamily(Enum):
+    
+    Normal = Normal
+    Cauchy = Cauchy
+    Beta = Beta
+    
+    @classmethod
+    def from_name(cls, name: str) -> Self:
+        """Specify the distribution family by the name.
+
+        Parameters
+        ----------
+        name : str
+            - "normal" or "gaussian"
+            - "cauchy"
+            - "beta"
+
+        Returns
+        -------
+        Self
+            A variant of this enumeration.
+        """
+        
+        # Convert to lower case
+        name = name.lower()
+        
+        match name:
+            case "normal" | "guassian":
+                return DistributionFamily.Normal
+            case "cauchy":
+                return DistributionFamily.Cauchy
+            case "beta":
+                return DistributionFamily.Beta
 
 class Agent(nn.Module):
     
+    n_dist_params = 2
+    
     def __init__(
             self,
-            action_dim: int
+            action_dim: int,
+            distribution_family: DistributionFamily | str = DistributionFamily.Normal
         ) -> None:
         
         super().__init__()
         
         self._action_dim = action_dim
+        if isinstance(distribution_family, str):
+            distribution_family = DistributionFamily.from_name(distribution_family)
+        self._distribution_family = distribution_family
+        self._distribution_cls = distribution_family.value
         self._action = None
         self._distribution = None
-        
-        self._n_dist_params = 2
         
         self.fc = nn.Linear(action_dim, 64)
         
@@ -46,10 +86,22 @@ class Agent(nn.Module):
     
     @property
     def action(self) -> Tensor:
-        """Action taken.
+        """The latest taken action.
         """
         
-        return self._action
+        # If there are several actions,
+        # then return the last one
+        # This is caused by passing a batch of states
+        if len(self._action.shape) > 1:
+            action = self._action[-1]
+            
+        else:
+            action = self._action
+        
+        # Detach from the computation graph
+        action = action.detach()
+        
+        return action
         
     def forward(self, state: Tensor) -> Distribution:
         """_summary_
@@ -57,25 +109,28 @@ class Agent(nn.Module):
         Parameters
         ----------
         state : Tensor
-            (state_dim, action_dim)
-            (N, state_dim, action_dim)
+            Shape:
+            - (state_dim, action_dim)
+            - (N, state_dim, action_dim)
 
         Returns
         -------
         Distribution
-            _description_
+            Shape:
+            - (state_dim, action_dim)
+            - (N, state_dim, action_dim)
         """
         
         x = self.fc(state)
         x, (h, c) = self.lstm(x)
         x = x[..., -1, :]
         
-        # Extract parameters for the distribution
-        mean = self.dist_param1(x)
-        std = self.dist_param2(x)
-
-        # Generate the distributino
-        distribution = Normal(mean, std)
+        
+        # Generate the distribution
+        distribution = self._distribution_cls(
+            self.dist_param1(x), 
+            self.dist_param2(x)
+        )
         
         # Store the distribution
         self._distribution = distribution 

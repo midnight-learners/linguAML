@@ -1,8 +1,10 @@
 from typing import Iterable
 from abc import ABC
+from enum import Enum
 from pydantic import BaseModel
+from .cat import CategoricalHP
 
-class HpConfig(BaseModel, ABC):
+class HPConfig(BaseModel, ABC):
     
     @classmethod
     def dim(cls) -> int:
@@ -30,12 +32,41 @@ class HpConfig(BaseModel, ABC):
         ))
     
     @classmethod
-    def param_type(cls, name: str) -> type:
+    def categorical_param_names(cls) -> tuple[str]:
+        """Names of categorical hyperparameters.
+        """
+        
+        return tuple(filter(
+            lambda param_name: issubclass(cls.param_type(param_name), Enum),
+            cls.param_names()
+        ))
+    
+    @classmethod
+    def param_type(cls, name: str) -> float | int | type[CategoricalHP]:
         """Data type of the hyperparameter.
         """
         
-        return cls.__fields__.get(name).annotation
+        return cls.__fields__.get(name).type_
     
+    @classmethod
+    def n_levels_in_category(cls, category: str) -> int:
+        """Number of levels in the given category.
+
+        Parameters
+        ----------
+        category : str
+            Category name.
+
+        Returns
+        -------
+        int
+            Number of levels.
+        """
+        
+        category_type: CategoricalHP = cls.param_type(category)
+        
+        return category_type.n_levels()
+
     @classmethod
     def from_action(
             cls, 
@@ -63,3 +94,4 @@ class HpConfig(BaseModel, ABC):
             hps[hp_name] = hp
             
         return cls(**hps)
+    

@@ -11,7 +11,7 @@ from .description import DatasetDescription
 class Dataset(BaseModel):
     
     class Config:
-        allow_mutation = False
+        frozen = True
         arbitrary_types_allowed = True
     
     description: DatasetDescription
@@ -60,6 +60,7 @@ class Dataset(BaseModel):
             return dataset
         
         # Dataset directory
+        mkdir_if_not_exists(data_dir)
         dataset_dir_name = dasherize(description.name)
         dataset_dir = mkdir_if_not_exists(data_dir.joinpath(dataset_dir_name))
 

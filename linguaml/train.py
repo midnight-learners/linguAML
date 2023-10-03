@@ -1,14 +1,17 @@
-import logging
 import numpy as np
 import torch
 from torch import Tensor
 from torch.utils.data import DataLoader
 from torch.optim import Optimizer
 
-from .data.transition import Transition, convert_to_transitions
+from .utils import get_logger
+from .data.transition import Transition, convert_to_transition_with_fields_as_lists
 from .data.replay_buffer import ReplayBuffer
 from .env import Env
 from .agent import Agent
+from .advantage import AdvantageCalculator
+
+logger = get_logger(__name__)
 
 def train(
         env: Env,
@@ -17,7 +20,7 @@ def train(
         n_epochs: int,
         replay_buffer: ReplayBuffer,
         max_n_timesteps_per_episode: int,
-        warm_start_duration: int,
+        advantage_calculator: AdvantageCalculator,
         batch_size: int,
         n_epochs_for_updating_agent: int,
         epsilon: float
@@ -25,24 +28,29 @@ def train(
         
     for epoch in range(n_epochs):
         
-        logging.info(f"PPO epoch: {epoch + 1}")
-        avg_episode_rewards = []
+        logger.info(f"epoch: {epoch + 1}")
         
         # Collect transitions
-        collect_transitions(
+        sample_transitions(
             replay_buffer=replay_buffer,
             env=env,
             agent=agent,
             max_n_timesteps_per_episode=max_n_timesteps_per_episode,
-            warm_start_duration=warm_start_duration
+            advantage_calculator=advantage_calculator
         )
         
-        rewards = []
-        for transition in replay_buffer:
-            rewards.append(transition.reward)
+        # The latest hyperparameter configuraion from
+        # the latest taken action
+        hp_config = env.family.hp.from_action(
+            agent.action,
+            env.hp_bounds   
+        )
+        logger.info(f"last hyperparameter configuration: {hp_config}")
+        
+        # Average episode rewards
+        rewards = convert_to_transition_with_fields_as_lists(replay_buffer).reward
         avg_episode_reward = np.mean(rewards)
-        avg_episode_rewards.append(avg_episode_reward)
-        logging.info(f"average episode rewards: {avg_episode_reward}")
+        logger.info(f"average episode rewards: {avg_episode_reward}")
         
         # Create a data loader
         replay_buffer_loader = DataLoader(
@@ -50,7 +58,7 @@ def train(
             batch_size=batch_size
         )
         
-        # Train the actor and critic   
+        # Train the agent
         update_agent(
             agent=agent,
             optimizer=optimizer,
@@ -62,12 +70,12 @@ def train(
         # Clear replay buffer
         replay_buffer.clear()
 
-def collect_transitions(
+def sample_transitions(
         replay_buffer: ReplayBuffer,
         env: Env,
         agent: Agent,
         max_n_timesteps_per_episode: int,
-        warm_start_duration: int
+        advantage_calculator: AdvantageCalculator
     ) -> None:
         
     while len(replay_buffer) < replay_buffer.capacity:
@@ -77,7 +85,7 @@ def collect_transitions(
             env=env,
             agent=agent,
             max_n_timesteps_per_episode=max_n_timesteps_per_episode,
-            warm_start_duration=warm_start_duration
+            advantage_calculator=advantage_calculator
         )
         
         # Add to the buffer
@@ -87,16 +95,11 @@ def play_one_episode(
         env: Env,
         agent: Agent,
         max_n_timesteps_per_episode: int,
-        warm_start_duration: int
+        advantage_calculator: AdvantageCalculator
     ) -> list[Transition]:
     
-    states = []
-    actions = []
-    rewards = []
-    log_probs = []
-
+    transitions = []
     state = env.reset()
-    is_done = False
     
     for t in range(max_n_timesteps_per_episode):
         
@@ -112,37 +115,22 @@ def play_one_episode(
         # Interact with the env
         next_state, reward = env.step(action)
         
-        states.append(state)
-        actions.append(action)
-        rewards.append(reward)
-        log_probs.append(log_prob)
+        # Compute advantage using moving average technique
+        advantage = advantage_calculator(reward)
+        
+        # Transition sample
+        transition = Transition(
+            state=state,
+            action=action,
+            reward=reward,
+            advantage=advantage,
+            log_prob=log_prob
+        )
+        transitions.append(transition)
         
         # Step to the next state
         state = next_state
-        
-    # Compute baselines using moving average technique
-    baselines = ema(np.array(rewards), period=warm_start_duration + 1)
-        
-    # Drop the data in the warm start
-    states = states[warm_start_duration:]
-    actions = actions[warm_start_duration:]
-    rewards = rewards[warm_start_duration:]
-    log_probs = log_probs[warm_start_duration:]
-    
-    # Compute advantages
-    advantages = rewards - baselines
-    
-    transition_with_fields_as_list = Transition(
-        state=states,
-        action=actions,
-        reward=rewards,
-        advantage=advantages,
-        log_prob=log_probs
-    )
-    
-    # Convert to list of transitions
-    transitions = convert_to_transitions(transition_with_fields_as_list)
-    
+
     return transitions
 
 def update_agent(
