@@ -7,55 +7,68 @@ from .cat import CategoricalHP
 class HPConfig(BaseModel, ABC):
     
     @classmethod
-    def dim(cls) -> int:
-        """Dimension of the hyperparameter space, i.e.,
-        the number of hyperparameters.
+    def n_hps(cls) -> int:
+        """Number of hyperparameters.
         """
         
-        return len(cls.param_names())
+        return len(cls.hp_names())
     
     @classmethod
-    def param_names(cls) -> tuple[str]:
+    def n_numeric_hps(cls) -> int:
+        """Number of numeric hyperparameters.
+        """
+        
+        return len(cls.numeric_hp_names())
+    
+    @classmethod
+    def n_categorical_hps(cls) -> int:
+        """Number of categorical hyperparameters.
+        """
+        
+        return len(cls.categorical_hp_names())
+    
+    @classmethod
+    def hp_names(cls) -> tuple[str]:
         """All hyperparameter names.
         """
         
         return tuple(cls.__fields__.keys())
     
     @classmethod
-    def numeric_param_names(cls) -> tuple[str]:
+    def numeric_hp_names(cls) -> tuple[str]:
         """Names of numeric hyperparameters.
         """
         
         return tuple(filter(
-            lambda param_name: cls.param_type(param_name) in (float, int),
-            cls.param_names()
+            lambda param_name: cls.hp_type(param_name) in (float, int),
+            cls.hp_names()
         ))
     
     @classmethod
-    def categorical_param_names(cls) -> tuple[str]:
+    def categorical_hp_names(cls) -> tuple[str]:
         """Names of categorical hyperparameters.
         """
         
         return tuple(filter(
-            lambda param_name: issubclass(cls.param_type(param_name), Enum),
-            cls.param_names()
+            lambda param_name: issubclass(cls.hp_type(param_name), Enum),
+            cls.hp_names()
         ))
     
     @classmethod
-    def param_type(cls, name: str) -> float | int | type[CategoricalHP]:
+    def hp_type(cls, name: str) -> float | int | type[CategoricalHP]:
         """Data type of the hyperparameter.
         """
         
         return cls.__fields__.get(name).type_
     
     @classmethod
-    def n_levels_in_category(cls, category: str) -> int:
+    def n_levels_in_category(cls, categorical_hp_name: str) -> int:
         """Number of levels in the given category.
 
         Parameters
         ----------
         category : str
-            Category name.
+            Categorical hyperparameter name.
 
         Returns
         -------
@@ -63,7 +76,7 @@ class HPConfig(BaseModel, ABC):
             Number of levels.
         """
         
-        category_type: CategoricalHP = cls.param_type(category)
+        category_type: CategoricalHP = cls.hp_type(categorical_hp_name)
         
         return category_type.n_levels()
 
@@ -79,11 +92,11 @@ class HPConfig(BaseModel, ABC):
         # Iterate over all slots in the action
         for i, hp in enumerate(action):
             
-            # Find all numberic HPs
-            hp_name = cls.numeric_param_names()[i]
+            # Find all numberic hyperparameters
+            hp_name = cls.numeric_hp_names()[i]
             
             # Get the HP type, which is either float or int
-            hp_type = cls.param_type(hp_name)
+            hp_type = cls.hp_type(hp_name)
             
             # Lower and upper bounds
             hp_min, hp_max = bounds[hp_name] 

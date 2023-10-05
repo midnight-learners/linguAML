@@ -1,5 +1,5 @@
 import logging
-from ..config import settings
+from .config import settings
 
 # Console handler
 # It streams the logs in the terminal

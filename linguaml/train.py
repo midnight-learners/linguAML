@@ -4,11 +4,11 @@ from torch import Tensor
 from torch.utils.data import DataLoader
 from torch.optim import Optimizer
 
-from .utils import get_logger
+from .logger import get_logger
 from .data.transition import Transition, convert_to_transition_with_fields_as_lists
 from .data.replay_buffer import ReplayBuffer
 from .env import Env
-from .agent import Agent
+from ._agent import Agent
 from .advantage import AdvantageCalculator
 
 logger = get_logger(__name__)
