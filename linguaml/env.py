@@ -1,18 +1,26 @@
 from typing import Optional, Iterable
+import multiprocessing
 from collections import deque
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score
 from .data.utils import train_valid_test_split
 from .data.dataset import Dataset
-from .families import Family
+from .families.base import Family
+from .action import (
+    calc_action_dim,
+    convert_action_to_hp_config
+)
+from .logger import get_logger
+
+logger = get_logger(__name__)
 
 class Env:
     
     def __init__(
             self,
             family: Family,
-            hp_bounds: dict[str, tuple],
+            cont_hp_bounds: dict[str, tuple],
             dataset: Dataset,
             *,
             valid_size: float = 0.2,
@@ -25,7 +33,10 @@ class Env:
         self._family = family
         
         # Lower and upper bounds of all HPs
-        self._hp_bounds = hp_bounds
+        self._cont_hp_bounds = cont_hp_bounds
+        
+        # Dimensiton of agent's action space
+        self._action_dim = calc_action_dim(family)
         
         # Data
         X = dataset.features.to_numpy()
@@ -64,11 +75,12 @@ class Env:
         return self._family
     
     @property
-    def hp_bounds(self) -> dict[str, tuple]:
-        """Lower and upper bounds of hyperparameters of the model family.
+    def cont_hp_bounds(self) -> dict[str, tuple]:
+        """Lower and upper bounds of the continuous hyperparameters 
+        of the model family.
         """
         
-        return self._hp_bounds
+        return self._cont_hp_bounds
     
     @property
     def state_dim(self) -> int:
@@ -94,7 +106,7 @@ class Env:
         
         # Generate random actions
         random_actions = [
-            sigmoid(rng.randn(self._family.n_hps)) 
+            sigmoid(rng.randn(self._action_dim)) 
             for _ in range(self._state_dim)
         ]
         
@@ -115,17 +127,48 @@ class Env:
         self._actions_taken.append(action)
         state = np.array(self._actions_taken)
         
-        # Create the HP configuation from the action taken
-        model = self._family.define_model(
+        # Create the hyperparameter configuation from the action taken
+        hp_config = convert_action_to_hp_config(
             action=action,
-            hp_bounds=self._hp_bounds
+            family=self._family,
+            cont_hp_bounds=self._cont_hp_bounds
+        )
+        
+        # Difine the model with the hyperparameter configuation
+        model = self._family.define_model(
+            hp_config=hp_config
         )
         
         # Train the model
-        model.fit(self._X_train, self._y_train)
-        
-        # Compute the accuracy on validation dataset
-        y_pred = model.predict(self._X_valid)
-        reward = accuracy_score(self._y_valid, y_pred)
+        with multiprocessing.Pool(processes=1) as pool:
+            
+            result = pool.apply_async(
+                fit_model,
+                args=(
+                    model,
+                    self._X_train,
+                    self._y_train,
+                    self._X_valid,
+                    self._y_valid
+                )
+            )
+            
+            try:
+                # Compute the accuracy on validation dataset
+                reward = result.get(timeout=5.0)
+                
+            except multiprocessing.TimeoutError:
+                logger.warn("it takes too long to fit the model")
+                reward = 0.0
         
         return state, reward
+    
+def fit_model(model, X_train, y_train, X_valid, y_valid):
+            
+    model.fit(X_train, y_train)
+    
+    # Compute the accuracy on validation dataset
+    y_pred = model.predict(X_valid)
+    reward = accuracy_score(y_valid, y_pred)
+    
+    return reward

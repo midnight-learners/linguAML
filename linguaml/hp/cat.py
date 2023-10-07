@@ -1,3 +1,4 @@
+from typing import Self
 from enum import StrEnum
 import numpy as np
 
@@ -8,6 +9,24 @@ class CategoricalHP(StrEnum):
     
     def __repr__(self) -> str:
         return f"'{str(self)}'"
+    
+    @classmethod
+    def from_index(cls, idx: int) -> Self:
+        """Returns the level of this category 
+        based on the given level index.
+
+        Parameters
+        ----------
+        idx : int
+            Level index.
+
+        Returns
+        -------
+        Self
+            Level.
+        """
+        
+        return tuple(cls.__members__.values())[idx]
     
     @classmethod
     def n_levels(cls) -> int:

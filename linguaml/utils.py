@@ -4,7 +4,6 @@ import inflection
 from torch import Tensor
 from .families.base import Family
 
-
 def mkdir_if_not_exists(dir: Path) -> Path:
     
     # Make dir if it does not exist
@@ -15,6 +14,9 @@ def mkdir_if_not_exists(dir: Path) -> Path:
 
 def dasherize(text: str) -> str:
     
+    # Convert camel case to snake case
+    text = inflection.underscore(text)
+    
     # Convert to lower case
     text = text.lower()
     
@@ -23,9 +25,6 @@ def dasherize(text: str) -> str:
     
     # Replace all whitespaces with dashes
     text = re.sub(r"\s+", "-", text)
-    
-    # Finalize
-    text = inflection.dasherize(text)
     
     return text
 

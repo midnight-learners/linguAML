@@ -215,11 +215,11 @@ class Agent(nn.Module):
             self.forward(state)
         
         # Continuous action
-        cont_action = self.select_cont_action(state)
+        cont_action = self._select_cont_action()
         
         # All discrete actions
         disc_actions = [
-            self.select_disc_action(category, state)
+            self._select_disc_action(category)
             for category in self._family.categorical_hp_names()
         ]
         
@@ -231,15 +231,7 @@ class Agent(nn.Module):
         
         return action
         
-    def select_cont_action(
-            self, 
-            state: Optional[Tensor] = None
-        ) -> Tensor:
-        
-        # Generate a new distribution
-        # if the state is provided
-        if state is not None:
-            self.forward(state)
+    def _select_cont_action(self) -> Tensor:
         
         # Select an action randomly from the distribution
         action = self._distribution["continuous"].sample()
@@ -250,17 +242,8 @@ class Agent(nn.Module):
         
         return action
     
-    def select_disc_action(
-            self, 
-            category: str, 
-            state: Optional[Tensor] = None
-        ) -> Tensor:
-        
-        # Generate a new distribution
-        # if the state is provided
-        if state is not None:
-            self.forward(state)
-        
+    def _select_disc_action(self, category: str) -> Tensor:
+           
         # Select an action randomly from the distribution, i.e.,
         # the index of the category level
         action = self._distribution[category].sample()
@@ -302,11 +285,11 @@ class Agent(nn.Module):
         if state is not None:
             self.forward(state)
             
-        log_prob_of_cont_action = self.log_prob_of_cont_action(action, state)  
+        log_prob_of_cont_action = self._log_prob_of_cont_action(action)  
         
         log_prob_of_disc_actions = [
-            self.log_prob_of_disc_action(category, action, state)
-            for category in self._family.categorical_hp_names()
+            self._log_prob_of_disc_action(categorical_hp_name, action)
+            for categorical_hp_name in self._family.categorical_hp_names()
         ]
         
         log_prob = torch.sum(
@@ -319,50 +302,35 @@ class Agent(nn.Module):
         
         return log_prob
     
-    def log_prob_of_cont_action(
-            self, 
-            action: Optional[Tensor] = None, 
-            state: Optional[Tensor] = None
-        ) -> Tensor:
+    def _log_prob_of_cont_action(self, action: Optional[Tensor] = None) -> Tensor:
         
         if action is None:
-            assert state is None,\
-                "state must be set None since action is None"
             action = self._action
-        
-        if state is not None:
-            self.forward(state)
             
-        action = extract_cont_action(
+        cont_action = extract_cont_action(
             action=action,
             family=self._family
         )
         
-        log_prob = self._distribution["continuous"].log_prob(action).sum(dim=-1)
+        log_prob = self._distribution["continuous"].log_prob(cont_action).sum(dim=-1)
         
         return log_prob
 
-    def log_prob_of_disc_action(
+    def _log_prob_of_disc_action(
             self, 
-            categorical_hp_name: str,
-            action: Optional[Tensor] = None, 
-            state: Optional[Tensor] = None
+            categorical_hp_name: str, 
+            action: Optional[Tensor] = None
         ) -> Tensor:
         
         if action is None:
-            assert state is None,\
-                "state must be set None since action is None"
             action = self._action
             
-        action = extract_disc_action(
+        disc_action = extract_disc_action(
             action=action,
             family=self._family,
             categorical_hp_name=categorical_hp_name
         )
         
-        if state is not None:
-            self.forward(state)
-        
-        log_prob = self._distribution[categorical_hp_name].log_prob(action)
+        log_prob = self._distribution[categorical_hp_name].log_prob(disc_action)
         
         return log_prob

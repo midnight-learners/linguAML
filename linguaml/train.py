@@ -8,8 +8,9 @@ from .logger import get_logger
 from .data.transition import Transition, convert_to_transition_with_fields_as_lists
 from .data.replay_buffer import ReplayBuffer
 from .env import Env
-from ._agent import Agent
+from .agent import Agent
 from .advantage import AdvantageCalculator
+from .action import convert_action_to_hp_config
 
 logger = get_logger(__name__)
 
@@ -38,14 +39,6 @@ def train(
             max_n_timesteps_per_episode=max_n_timesteps_per_episode,
             advantage_calculator=advantage_calculator
         )
-        
-        # The latest hyperparameter configuraion from
-        # the latest taken action
-        hp_config = env.family.hp.from_action(
-            agent.action,
-            env.hp_bounds   
-        )
-        logger.info(f"last hyperparameter configuration: {hp_config}")
         
         # Average episode rewards
         rewards = convert_to_transition_with_fields_as_lists(replay_buffer).reward
@@ -127,6 +120,14 @@ def play_one_episode(
             log_prob=log_prob
         )
         transitions.append(transition)
+        
+        # Logging
+        hp_config = convert_action_to_hp_config(
+            action=action,
+            family=env.family,
+            cont_hp_bounds=env.cont_hp_bounds
+        )
+        logger.info(f"{hp_config}; accuracy: {reward}")
         
         # Step to the next state
         state = next_state
