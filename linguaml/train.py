@@ -4,15 +4,13 @@ from torch import Tensor
 from torch.utils.data import DataLoader
 from torch.optim import Optimizer
 
-from .logger import get_logger
+from .logger import logger
 from .data.transition import Transition, convert_to_transition_with_fields_as_lists
 from .data.replay_buffer import ReplayBuffer
 from .env import Env
 from .agent import Agent
 from .advantage import AdvantageCalculator
 from .action import convert_action_to_hp_config
-
-logger = get_logger(__name__)
 
 def train(
         env: Env,
@@ -29,7 +27,8 @@ def train(
         
     for epoch in range(n_epochs):
         
-        logger.info(f"epoch: {epoch + 1}")
+        # Update logger's epoch
+        logger.extra["epoch"] = epoch + 1
         
         # Collect transitions
         sample_transitions(
@@ -40,10 +39,18 @@ def train(
             advantage_calculator=advantage_calculator
         )
         
-        # Average episode rewards
+        # Average reward of all sample in the buffer
         rewards = convert_to_transition_with_fields_as_lists(replay_buffer).reward
-        avg_episode_reward = np.mean(rewards)
-        logger.info(f"average episode rewards: {avg_episode_reward}")
+        avg_reward = np.mean(rewards)
+        logger.info(
+            (
+                "Epoch: {epoch}; "
+                "Average Sample Accuracy: {avg_reward}"
+            ).format(
+                epoch=logger.extra["epoch"],
+                avg_reward=avg_reward
+            )
+        )
         
         # Create a data loader
         replay_buffer_loader = DataLoader(
@@ -108,9 +115,41 @@ def play_one_episode(
         # Interact with the env
         next_state, reward = env.step(action)
         
+        # Logging
+        hp_config = convert_action_to_hp_config(
+            action=action,
+            family=env.family,
+            cont_hp_bounds=env.cont_hp_bounds
+        )
+        
+        message_parts = [
+            f"Epoch: {logger.extra['epoch']}",
+            f"Hyperparameters: {hp_config}"
+        ]
+                
+        if reward is None:
+            # The reward should be set zero
+            reward = 0.0
+            
+            message_parts.extend([
+                f"Accuracy: {reward}",
+                "Model fitting exceeds time limit"
+            ])
+            
+            message = "; ".join(message_parts)
+            
+            # Warning log
+            logger.warning(message)
+        
+        
+        else:
+            message_parts.append(f"Accuracy: {reward}")
+            message = "; ".join(message_parts)
+            logger.info(message)
+            
         # Compute advantage using moving average technique
         advantage = advantage_calculator(reward)
-        
+            
         # Transition sample
         transition = Transition(
             state=state,
@@ -120,15 +159,7 @@ def play_one_episode(
             log_prob=log_prob
         )
         transitions.append(transition)
-        
-        # Logging
-        hp_config = convert_action_to_hp_config(
-            action=action,
-            family=env.family,
-            cont_hp_bounds=env.cont_hp_bounds
-        )
-        logger.info(f"{hp_config}; accuracy: {reward}")
-        
+
         # Step to the next state
         state = next_state
 
@@ -143,6 +174,7 @@ def update_agent(
     ):
     
     for _ in range(n_epochs):
+        
         transition: Transition
         for transition in replay_buffer_loader:
             

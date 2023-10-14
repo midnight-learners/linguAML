@@ -4,27 +4,21 @@ from collections import deque
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score
-from .data.utils import train_valid_test_split
 from .data.dataset import Dataset
 from .families.base import Family
 from .action import (
     calc_action_dim,
     convert_action_to_hp_config
 )
-from .logger import get_logger
-
-logger = get_logger(__name__)
 
 class Env:
     
     def __init__(
             self,
+            dataset: Dataset,
             family: Family,
             cont_hp_bounds: dict[str, tuple],
-            dataset: Dataset,
             *,
-            valid_size: float = 0.2,
-            test_size: float = 0.2,
             state_dim: int = 10,
             random_state: Optional[int] = None,
         ) -> None:
@@ -37,26 +31,21 @@ class Env:
         
         # Dimensiton of agent's action space
         self._action_dim = calc_action_dim(family)
-        
-        # Data
-        X = dataset.features.to_numpy()
-        y = dataset.targets.to_numpy().flatten()
-        label_encoder = LabelEncoder()
-        y = label_encoder.fit_transform(y)
-        
+
         # Random state
         self._random_state = random_state
         
-        # Split into training, validation and test datasets
-        split = train_valid_test_split(
-            X, y,
-            valid_size=valid_size,
-            test_size=test_size,
-            random_state=random_state
-        )
-        self._X_train, self._y_train = split["train"]
-        self._X_valid, self._y_valid = split["valid"]
-        self._X_test, self._y_test = split["test"]
+        # Dataset
+        self._dataset = dataset
+        self._X_train, self._y_train = self._dataset.train.features.to_numpy(), self._dataset.train.targets.to_numpy().flatten()
+        self._X_valid, self._y_valid = self._dataset.valid.features.to_numpy(), self._dataset.valid.targets.to_numpy().flatten()
+        self._X_test, self._y_test = self._dataset.test.features.to_numpy(), self._dataset.test.targets.to_numpy().flatten()
+        
+        # Encode targets
+        label_encoder = LabelEncoder()
+        self._y_train = label_encoder.fit_transform(self._y_train)
+        self._y_valid = label_encoder.transform(self._y_valid)
+        self._y_test = label_encoder.transform(self._y_test)
         
         # State dimention
         self._state_dim = state_dim
@@ -66,6 +55,13 @@ class Env:
         
         # Reset env
         self._init_state = self.reset()
+        
+    @property
+    def dataset(self) -> Dataset:
+        """Dateset to work on.
+        """
+        
+        return self._dataset
     
     @property
     def family(self) -> Family:
@@ -119,9 +115,8 @@ class Env:
         self._init_state = init_state
         
         return init_state
-        
     
-    def step(self, action: Iterable[float]) -> tuple[np.ndarray, float]:
+    def step(self, action: Iterable[float]) -> tuple[np.ndarray, Optional[float]]:
         
         # Generate the next state
         self._actions_taken.append(action)
@@ -158,8 +153,7 @@ class Env:
                 reward = result.get(timeout=5.0)
                 
             except multiprocessing.TimeoutError:
-                logger.warn("it takes too long to fit the model")
-                reward = 0.0
+                reward = None
         
         return state, reward
     

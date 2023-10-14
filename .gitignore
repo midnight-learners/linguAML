@@ -28,6 +28,8 @@
 
 # Large data directory
 /data
+/_data
+/datasets
 
 # Configuration and secret files
 /config.toml

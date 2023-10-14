@@ -4,12 +4,17 @@ import tomllib
 from pydantic import BaseSettings
 from xpyutils import singleton
 
+PROJECT_STORAGE_DIR = Path.home().joinpath(".linguaml")
+
+# Name of the existing configuration file
+# under the project storage directory
+EXISTING_CONFIG_FILENAME = ".conf"
+
 @singleton
 class Settings(BaseSettings):
     
-    project_dir: Path = Path.home().joinpath(".linguaml")
-    data_dir: Path = project_dir.joinpath("data")
-    log_filepath: Path = project_dir.joinpath(".log")
+    data_dir: Path = PROJECT_STORAGE_DIR.joinpath("data")
+    log_filepath: Path = PROJECT_STORAGE_DIR.joinpath(".log")
     openai_api_key: Optional[str] = None
     
     @classmethod
@@ -28,9 +33,24 @@ class Settings(BaseSettings):
                 setattr(settings, key, value)
 
         return settings
+    
+    @classmethod
+    def from_exisiting_file(cls) -> Self:
+        
+        # The existing configuration file
+        # uder the project storage directory
+        existing_config_filepath = PROJECT_STORAGE_DIR.joinpath(EXISTING_CONFIG_FILENAME)
+        
+        # Load from existing file
+        if existing_config_filepath.is_file():
+            return cls.from_file(existing_config_filepath)
+        
+        # Otherwise, just return the default settings
+        return cls()
+        
 
 def load_config(config_filepath: Path | str) -> Settings:
     
     return Settings.from_file(config_filepath)
 
-settings = Settings()
+settings = Settings.from_exisiting_file()

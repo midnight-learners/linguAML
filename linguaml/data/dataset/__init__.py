@@ -1,5 +1,6 @@
-from .dataset import Dataset
+from .dataset import Dataset, load_dataset
 
 __all__ = [
-    "Dataset"
+    "Dataset",
+    "load_dataset"
 ]

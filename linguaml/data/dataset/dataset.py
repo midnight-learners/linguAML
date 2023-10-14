@@ -8,15 +8,25 @@ from ...utils import mkdir_if_not_exists, dasherize
 from ...config import settings
 from .description import DatasetDescription
 
-class Dataset(BaseModel):
+class DataSubset(BaseModel):
+    
+    features: pd.DataFrame
+    targets: pd.DataFrame
     
     class Config:
         frozen = True
         arbitrary_types_allowed = True
+        
+class Dataset(BaseModel):
     
     description: DatasetDescription
-    features: pd.DataFrame
-    targets: pd.DataFrame
+    train: DataSubset
+    valid: DataSubset
+    test: DataSubset
+    
+    class Config:
+        frozen = True
+        arbitrary_types_allowed = True
     
     @property
     def name(self) -> str:
@@ -92,7 +102,19 @@ class Dataset(BaseModel):
         return dataset
     
     @classmethod
-    def from_dir(cls, dataset_dir: Path | str) -> Self:
+    def from_dataset_dir(cls, dataset_dir: Path | str) -> Self:
+        """Loads dataset from the preprocessed data under the given directory.
+
+        Parameters
+        ----------
+        dataset_dir : Path | str
+            The directory where everything related to the dataset is stored.
+
+        Returns
+        -------
+        Self
+            An instance of this class.
+        """
         
         # Convert to path
         dataset_dir = Path(dataset_dir)
@@ -105,15 +127,33 @@ class Dataset(BaseModel):
         # Create description
         description = DatasetDescription.from_metadata(metadata)
         
-        # Load features and targets
-        dataset_data_dir = dataset_dir.joinpath("data")
-        features_filepath = dataset_data_dir.joinpath("features").with_suffix(".csv")
-        targets_filepath = dataset_data_dir.joinpath("targets").with_suffix(".csv")
-        features = pd.read_csv(features_filepath)
-        targets = pd.read_csv(targets_filepath)
+        # Load precrossed data
+        preprocessed_data_dir = dataset_dir.joinpath("preprocessed-data")
+        
+        # Collect each data subset
+        data_subsets = {}
+        for data_subset_name in ("train", "valid", "test"):
+            
+            # Training, valid or test data directory
+            data_subset_dir = preprocessed_data_dir.joinpath(data_subset_name)
+
+            # Get features and targets
+            features_filepath = data_subset_dir.joinpath("features").with_suffix(".csv")
+            targets_filepath = data_subset_dir.joinpath("targets").with_suffix(".csv")
+            features = pd.read_csv(features_filepath, header=None)
+            targets = pd.read_csv(targets_filepath, header=None)
+            
+            # Create data subset
+            data_subset = DataSubset(features=features, targets=targets)
+            data_subsets[data_subset_name] = data_subset
         
         return cls(
             description=description,
-            features=features,
-            targets=targets
+            train=data_subsets["train"],
+            valid=data_subsets["valid"],
+            test=data_subsets["test"]
         )
+
+def load_dataset(dataset_dir: Path | str) -> Dataset:
+    
+    return Dataset.from_dataset_dir(dataset_dir)
