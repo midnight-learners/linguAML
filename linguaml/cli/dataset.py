@@ -1,20 +1,22 @@
-from typing import Optional
-from pydantic import BaseModel, Field
+import typer
+from typing_extensions import Annotated
+from rich import print
 from ..config import settings
 
-class DatasetListCommand(BaseModel):
+dataset_app = typer.Typer()
 
-    def run(self):
-        for dataset_dir in settings.data_dir.iterdir():
-            print(dataset_dir.name)
-            
+@dataset_app.command()
+def list(
+        index: Annotated[
+            bool,
+            typer.Option(
+                help="Show the index of the dataset in the front of its name"
+            )
+        ] = False
+    ) -> None:
 
-class DatasetCommand(BaseModel):
-    list: Optional[DatasetListCommand] = Field(description="List the datasets")
-    
-    def run(self):
-        for command_name in self.__fields__:
-            command = getattr(self, command_name)
-            if command is not None:
-                command.run()
-                break
+    for i, dataset_dir in enumerate(settings.data_dir.iterdir()):
+        line = dataset_dir.name
+        if index:
+            line = f"{i + 1} {line}"
+        print(line)

@@ -6,7 +6,7 @@ setup(
     packages=["linguaml"],
     entry_points={
         "console_scripts": [
-            "linguaml = linguaml:run",
+            "linguaml = linguaml:main",
         ],
     },
 )

@@ -6,9 +6,10 @@ from xpyutils import singleton
 
 PROJECT_STORAGE_DIR = Path.home().joinpath(".linguaml")
 
-# Name of the existing configuration file
+# Existing configuration file
 # under the project storage directory
 EXISTING_CONFIG_FILENAME = ".conf"
+EXISTING_CONFIG_FILEPATH = PROJECT_STORAGE_DIR.joinpath(EXISTING_CONFIG_FILENAME)
 
 @singleton
 class Settings(BaseSettings):
