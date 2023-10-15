@@ -1,0 +1,5 @@
+# Written in TOML format
+
+data_dir = ""
+log_filepath = ""
+openai_api_key = ""

@@ -1,5 +1,4 @@
 from .app import app
-from .config import *
 from .config import config_app
 from .dataset import dataset_app
 

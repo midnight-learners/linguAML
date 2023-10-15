@@ -24,7 +24,6 @@ def set(
                 help="Show the configuration settings."
             )
         ] = False
-        
     ) -> None:
     """Update the new configuration settings by copying
     the provided configuration file

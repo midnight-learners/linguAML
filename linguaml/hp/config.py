@@ -32,7 +32,7 @@ class HPConfig(BaseModel, ABC):
         """All hyperparameter names.
         """
         
-        return tuple(cls.__fields__.keys())
+        return tuple(cls.model_fields.keys())
     
     @classmethod
     def numeric_hp_names(cls) -> tuple[str]:
@@ -59,7 +59,7 @@ class HPConfig(BaseModel, ABC):
         """Data type of the hyperparameter.
         """
         
-        return cls.__fields__.get(name).type_
+        return cls.model_fields.get(name).annotation
     
     @classmethod
     def n_levels_in_category(cls, categorical_hp_name: str) -> int:

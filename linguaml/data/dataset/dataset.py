@@ -1,6 +1,6 @@
 from typing import Self, Optional
 from pathlib import Path
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 import json
 import pandas as pd
 from ucimlrepo import fetch_ucirepo
@@ -13,10 +13,11 @@ class DataSubset(BaseModel):
     features: pd.DataFrame
     targets: pd.DataFrame
     
-    class Config:
-        frozen = True
-        arbitrary_types_allowed = True
-        
+    model_config = ConfigDict(
+        frozen=True,
+        arbitrary_types_allowed=True
+    )
+  
 class Dataset(BaseModel):
     
     description: DatasetDescription
@@ -24,9 +25,10 @@ class Dataset(BaseModel):
     valid: DataSubset
     test: DataSubset
     
-    class Config:
-        frozen = True
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(
+        frozen=True,
+        arbitrary_types_allowed=True
+    )
     
     @property
     def name(self) -> str:

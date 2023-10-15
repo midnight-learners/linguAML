@@ -80,11 +80,9 @@ class Family(ABC):
         
     @classmethod
     def define_model(
-            cls, 
+            cls,
             *,
             hp_config: Optional[HPConfig] = None,
-            action: Optional[Iterable[float]] = None,
-            hp_bounds: Optional[dict[str, tuple]] = None,
             **kwargs
         ) -> Model:
         
@@ -92,13 +90,7 @@ class Family(ABC):
             model = cls._define_model_from_hp_config(hp_config)
             return model
         
-        if action is None and hp_bounds is None:
-            model = cls.model_type(**kwargs)
-            return model
-        
-        assert action is not None and hp_bounds is not None,\
-            "action and hp_bounds must both be set"
-        model = cls._define_model_from_action(action, hp_bounds)
+        model = cls.model_type(**kwargs)
         return model
     
     @classmethod
@@ -108,23 +100,7 @@ class Family(ABC):
         ) -> Model:
         
         # Create a model instance by unpacking the HP dict
-        model = cls.model_type(**hp_config.dict())
-        
-        return model
-    
-    @classmethod
-    def _define_model_from_action(
-            cls, 
-            action: Iterable[float],
-            hp_bounds: dict[str, tuple]
-        ) -> Model:
-        
-        hp_config = cls.hp_config_type.from_action(
-            action=action,
-            bounds=hp_bounds
-        )
-        
-        model = cls._define_model_from_hp_config(hp_config)
+        model = cls.model_type(**hp_config.model_dump())
         
         return model
     

@@ -1,7 +1,7 @@
 from typing import Self, Optional
 from pathlib import Path
 import tomllib
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 from xpyutils import singleton
 
 PROJECT_STORAGE_DIR = Path.home().joinpath(".linguaml")
@@ -24,14 +24,18 @@ class Settings(BaseSettings):
         # Create the one and only settings
         settings = cls()
         
+        # Read the custom configuration settings
         with open(config_filepath, "rb") as f:
-            custom_settings = tomllib.load(f)
+            custom_settings_dict = tomllib.load(f)
             
-        for key in custom_settings:
-            if key in settings.__fields__:
-                field_type = cls.__fields__.get(key).type_
-                value = field_type(custom_settings[key])
-                setattr(settings, key, value)
+        # Get the dict of current settings
+        settings_dict = settings.model_dump()
+        
+        # Update the current settings dict
+        settings_dict.update(custom_settings_dict)
+        
+        # Rebuild the settings instance
+        settings = Settings.model_validate(settings_dict)
 
         return settings
     
