@@ -2,7 +2,7 @@ from .base import Family
 from .svc import SVCFamily
 
 def get_family(name: str) -> Family:
-    """Gets the model family bi its name.
+    """Gets the model family by its name.
 
     Parameters
     ----------
@@ -12,12 +12,7 @@ def get_family(name: str) -> Family:
     Returns
     -------
     Family
-        _description_
-
-    Raises
-    ------
-    ValueError
-        _description_
+        An abstract class of the model family.
     """
     
     # Convert to lower case

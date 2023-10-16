@@ -176,7 +176,7 @@ class Agent(nn.Module):
         distribution = {}
         
         # Generate a continuous distribution
-        # for continuous hyperparameters
+        # for numeric hyperparameters
         cont_dist = self._cont_dist_cls(
             self.cont_dist_param1(x), 
             self.cont_dist_param2(x)

@@ -6,6 +6,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score
 from .data.dataset import Dataset
 from .families.base import Family
+from .hp.bounds import NumericHPBounds
 from .action import (
     calc_action_dim,
     convert_action_to_hp_config
@@ -17,7 +18,7 @@ class Env:
             self,
             dataset: Dataset,
             family: Family,
-            cont_hp_bounds: dict[str, tuple],
+            numeric_hp_bounds: NumericHPBounds | dict[str, tuple],
             *,
             state_dim: int = 10,
             random_state: Optional[int] = None,
@@ -27,7 +28,9 @@ class Env:
         self._family = family
         
         # Lower and upper bounds of all HPs
-        self._cont_hp_bounds = cont_hp_bounds
+        if not isinstance(numeric_hp_bounds, NumericHPBounds):
+            numeric_hp_bounds = NumericHPBounds.from_dict(numeric_hp_bounds)
+        self._numeric_hp_bounds = numeric_hp_bounds
         
         # Dimensiton of agent's action space
         self._action_dim = calc_action_dim(family)
@@ -71,12 +74,12 @@ class Env:
         return self._family
     
     @property
-    def cont_hp_bounds(self) -> dict[str, tuple]:
-        """Lower and upper bounds of the continuous hyperparameters 
+    def numeric_hp_bounds(self) -> NumericHPBounds:
+        """Lower and upper bounds of the numeric hyperparameters 
         of the model family.
         """
         
-        return self._cont_hp_bounds
+        return self._numeric_hp_bounds
     
     @property
     def state_dim(self) -> int:
@@ -126,7 +129,7 @@ class Env:
         hp_config = convert_action_to_hp_config(
             action=action,
             family=self._family,
-            cont_hp_bounds=self._cont_hp_bounds
+            numeric_hp_bounds=self._numeric_hp_bounds
         )
         
         # Difine the model with the hyperparameter configuation

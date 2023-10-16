@@ -1,6 +1,7 @@
 import numpy as np
 from torch import Tensor
 from .hp import HPConfig
+from .hp.bounds import NumericHPBounds
 from .families.base import Family
 
 def calc_action_dim(family: Family) -> int:
@@ -92,7 +93,7 @@ def extract_disc_action(
 def convert_action_to_hp_config(
         action: Tensor | np.ndarray,
         family: Family,
-        cont_hp_bounds: dict[str, tuple]
+        numeric_hp_bounds: NumericHPBounds | dict[str, tuple]
     ) -> HPConfig:
     """Converts the (single) input action to 
     a hyperparameter configuration.
@@ -107,8 +108,8 @@ def convert_action_to_hp_config(
         Single overall action.
     family : Family
         Model family.
-    cont_hp_bounds : dict[str, tuple]
-        Lower and upper bounds of all continuous hyparameters.
+    numeric_hp_bounds : NumericHPBounds | dict[str, tuple]
+        Lower and upper bounds of all numeric hyparameters.
 
     Returns
     -------
@@ -120,6 +121,10 @@ def convert_action_to_hp_config(
         "only single action input is supported"
     
     hps = {}
+    
+    # Convert to NumericHPBounds instance
+    if not isinstance(numeric_hp_bounds, NumericHPBounds):
+        numeric_hp_bounds = NumericHPBounds.from_dict(numeric_hp_bounds)
     
     # Extract the continuous action
     cont_action = extract_cont_action(action, family)
@@ -134,10 +139,10 @@ def convert_action_to_hp_config(
         hp_type = family.hp_type(hp_name)
         
         # Lower and upper bounds
-        hp_min, hp_max = cont_hp_bounds[hp_name] 
+        bounds = numeric_hp_bounds.get_bounds(hp_name)
         
-        # Recover the hyperparameter value        
-        hp = hp_type(hp * (hp_max - hp_min) + hp_min)
+        # Recover the hyperparameter value
+        hp = hp_type(hp * (bounds.max - bounds.min) + bounds.min)
         
         hps[hp_name] = hp
         

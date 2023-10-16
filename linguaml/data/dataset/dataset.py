@@ -155,7 +155,3 @@ class Dataset(BaseModel):
             valid=data_subsets["valid"],
             test=data_subsets["test"]
         )
-
-def load_dataset(dataset_dir: Path | str) -> Dataset:
-    
-    return Dataset.from_dataset_dir(dataset_dir)

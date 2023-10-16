@@ -3,7 +3,6 @@ from typing_extensions import Annotated
 from rich import print
 import tomllib
 from pathlib import Path
-from ..config import EXISTING_CONFIG_FILEPATH
 
 config_app = typer.Typer(
     help="Manage the project configuration settings."
@@ -39,6 +38,7 @@ def set(
     
     # Make the parent dir of the destination file path
     # if does not exist
+    from ..config import EXISTING_CONFIG_FILEPATH
     Path.mkdir(EXISTING_CONFIG_FILEPATH.parent, parents=True, exist_ok=True)
     
     # Copy the file to destination
@@ -55,6 +55,7 @@ def show():
     """
     
     # Warn the user the there are no configuration settings
+    from ..config import EXISTING_CONFIG_FILEPATH
     if not EXISTING_CONFIG_FILEPATH.is_file():
         print("[bold red]Currently, there are no configuration settings![/bold red]")
         print(

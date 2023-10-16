@@ -1,7 +1,7 @@
 import typer
 from typing_extensions import Annotated
 from rich import print
-from ..config import settings
+
 
 dataset_app = typer.Typer()
 
@@ -14,6 +14,8 @@ def list(
             )
         ] = False
     ) -> None:
+    
+    from ..config import settings
 
     for i, dataset_dir in enumerate(settings.data_dir.iterdir()):
         line = dataset_dir.name

@@ -3,7 +3,6 @@ import torch
 from torch import Tensor
 from torch.utils.data import DataLoader
 from torch.optim import Optimizer
-
 from .logger import logger
 from .data.transition import Transition, convert_to_transition_with_fields_as_lists
 from .data.replay_buffer import ReplayBuffer
@@ -18,11 +17,11 @@ def train(
         optimizer: Optimizer,
         n_epochs: int,
         replay_buffer: ReplayBuffer,
-        max_n_timesteps_per_episode: int,
+        n_timesteps_per_episode: int,
         advantage_calculator: AdvantageCalculator,
         batch_size: int,
         n_epochs_for_updating_agent: int,
-        epsilon: float
+        ppo_epsilon: float
     ):
         
     for epoch in range(n_epochs):
@@ -35,7 +34,7 @@ def train(
             replay_buffer=replay_buffer,
             env=env,
             agent=agent,
-            max_n_timesteps_per_episode=max_n_timesteps_per_episode,
+            n_timesteps_per_episode=n_timesteps_per_episode,
             advantage_calculator=advantage_calculator
         )
         
@@ -45,7 +44,7 @@ def train(
         logger.info(
             (
                 "Epoch: {epoch}; "
-                "Average Sample Accuracy: {avg_reward}"
+                "Average Sample Reward: {avg_reward}"
             ).format(
                 epoch=logger.extra["epoch"],
                 avg_reward=avg_reward
@@ -64,7 +63,7 @@ def train(
             optimizer=optimizer,
             replay_buffer_loader=replay_buffer_loader,
             n_epochs=n_epochs_for_updating_agent,
-            epsilon=epsilon
+            ppo_epsilon=ppo_epsilon
         )
         
         # Clear replay buffer
@@ -74,7 +73,7 @@ def sample_transitions(
         replay_buffer: ReplayBuffer,
         env: Env,
         agent: Agent,
-        max_n_timesteps_per_episode: int,
+        n_timesteps_per_episode: int,
         advantage_calculator: AdvantageCalculator
     ) -> None:
         
@@ -84,7 +83,7 @@ def sample_transitions(
         transitions = play_one_episode(
             env=env,
             agent=agent,
-            max_n_timesteps_per_episode=max_n_timesteps_per_episode,
+            n_timesteps_per_episode=n_timesteps_per_episode,
             advantage_calculator=advantage_calculator
         )
         
@@ -94,14 +93,14 @@ def sample_transitions(
 def play_one_episode(
         env: Env,
         agent: Agent,
-        max_n_timesteps_per_episode: int,
+        n_timesteps_per_episode: int,
         advantage_calculator: AdvantageCalculator
     ) -> list[Transition]:
     
     transitions = []
     state = env.reset()
     
-    for t in range(max_n_timesteps_per_episode):
+    for t in range(n_timesteps_per_episode):
         
         # Select an action
         state = torch.tensor(state, dtype=torch.float)
@@ -119,7 +118,7 @@ def play_one_episode(
         hp_config = convert_action_to_hp_config(
             action=action,
             family=env.family,
-            cont_hp_bounds=env.cont_hp_bounds
+            numeric_hp_bounds=env.numeric_hp_bounds
         )
         
         message_parts = [
@@ -170,7 +169,7 @@ def update_agent(
         optimizer: Optimizer,
         replay_buffer_loader: DataLoader,
         n_epochs: int,
-        epsilon: float = 0.2
+        ppo_epsilon: float = 0.2
     ):
     
     for _ in range(n_epochs):
@@ -186,7 +185,7 @@ def update_agent(
                 ),
                 old_log_prob=transition.log_prob,
                 advantage=transition.advantage,
-                epsilon=epsilon
+                epsilon=ppo_epsilon
             )
             
             # Update the agent
