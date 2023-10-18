@@ -127,6 +127,7 @@ def play_one_episode(
         ]
                 
         if reward is None:
+            
             # The reward should be set zero
             reward = 0.0
             
@@ -139,7 +140,6 @@ def play_one_episode(
             
             # Warning log
             logger.warning(message)
-        
         
         else:
             message_parts.append(f"Accuracy: {reward}")

@@ -1,4 +1,4 @@
-from typing import Self
+from typing import Self, Optional
 from pydantic import BaseModel
 
 class DatasetDescription(BaseModel):
@@ -6,7 +6,7 @@ class DatasetDescription(BaseModel):
     name: str
     abstract: str
     summary: str
-    variable_info: str
+    variable_info: Optional[str] = None
     
     @classmethod
     def from_metadata(cls, metadata: dict) -> Self:
@@ -54,8 +54,9 @@ class DatasetDescription(BaseModel):
         lines.append(self.summary)
         
         # Variable information
-        lines.append("## Variable Information\n")
-        lines.append(self.variable_info)
+        if self.variable_info is not None:
+            lines.append("## Variable Information\n")
+            lines.append(self.variable_info)
         
         md = "\n".join(lines)
         return md

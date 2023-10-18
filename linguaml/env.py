@@ -21,6 +21,7 @@ class Env:
             numeric_hp_bounds: NumericHPBounds | dict[str, tuple],
             *,
             state_dim: int = 10,
+            fitting_time_limit: float = 5.0,
             random_state: Optional[int] = None,
         ) -> None:
         
@@ -34,6 +35,9 @@ class Env:
         
         # Dimensiton of agent's action space
         self._action_dim = calc_action_dim(family)
+        
+        # Time limit of fitting the model
+        self._fitting_time_limit = fitting_time_limit
 
         # Random state
         self._random_state = random_state
@@ -153,7 +157,7 @@ class Env:
             
             try:
                 # Compute the accuracy on validation dataset
-                reward = result.get(timeout=5.0)
+                reward = result.get(timeout=self._fitting_time_limit)
                 
             except multiprocessing.TimeoutError:
                 reward = None
