@@ -430,6 +430,17 @@ files = [
 ]
 
 [[package]]
+name = "inflection"
+version = "0.5.1"
+description = "A port of Ruby on Rails inflector to Python"
+optional = false
+python-versions = ">=3.5"
+files = [
+    {file = "inflection-0.5.1-py2.py3-none-any.whl", hash = "sha256:f38b2b640938a4f35ade69ac3d053042959b62a0f1076a5bbaa1b9526605a8a2"},
+    {file = "inflection-0.5.1.tar.gz", hash = "sha256:1a29730d366e996aaacffb2f1f1cb9593dc38e2ddd30c91250c6dde09ea9b417"},
+]
+
+[[package]]
 name = "jinja2"
 version = "3.1.2"
 description = "A very fast and expressive template engine."
@@ -1282,6 +1293,17 @@ files = [
 ]
 
 [[package]]
+name = "ucimlrepo"
+version = "0.0.3"
+description = "Package to easily import datasets from the UC Irvine Machine Learning Repository into scripts and notebooks."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "ucimlrepo-0.0.3-py3-none-any.whl", hash = "sha256:935860c7a796b2e3419407bb2026b446898815e806da87f95614019e42d3d153"},
+    {file = "ucimlrepo-0.0.3.tar.gz", hash = "sha256:0ed682c4f6727f410a1dcfdb48bf58015945ad3a059bd00aa55b5f24680c63d2"},
+]
+
+[[package]]
 name = "urllib3"
 version = "2.0.7"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
@@ -1297,6 +1319,17 @@ brotli = ["brotli (>=1.0.9)", "brotlicffi (>=0.8.0)"]
 secure = ["certifi", "cryptography (>=1.9)", "idna (>=2.0.0)", "pyopenssl (>=17.1.0)", "urllib3-secure-extra"]
 socks = ["pysocks (>=1.5.6,!=1.5.7,<2.0)"]
 zstd = ["zstandard (>=0.18.0)"]
+
+[[package]]
+name = "xpyutils"
+version = "0.0.4"
+description = "Ongoing project of extra Python utilities including implementations of lazy property, regular expression, ..."
+optional = false
+python-versions = ">=3.0"
+files = [
+    {file = "xpyutils-0.0.4-py3-none-any.whl", hash = "sha256:922187d74451beb4d3bfb737447b0bad3543064257eac98e2d312e8d438c79fb"},
+    {file = "xpyutils-0.0.4.tar.gz", hash = "sha256:66da7fe58a1697e9af92dd5145a3c9bc9fcf9b6e17bd1bf758493f1ef040e2fa"},
+]
 
 [[package]]
 name = "yarl"
@@ -1388,4 +1421,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "8b559a01412883d78d9e29a3b4c7aa2865ec38af85e87b1f27b9d1a2dd802e09"
+content-hash = "f87f35678102795e09e2047eee9faf0588ee38be4130f56f4daea15e6f99a1ff"
