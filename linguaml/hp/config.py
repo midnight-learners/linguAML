@@ -79,32 +79,23 @@ class HPConfig(BaseModel, ABC):
         category_type: CategoricalHP = cls.hp_type(categorical_hp_name)
         
         return category_type.n_levels()
-
+    
     @classmethod
-    def from_action(
-            cls, 
-            action: Iterable[float],
-            bounds: dict[str, tuple]
-        ) -> tuple[str]:
+    def description(cls) -> dict[str, str]:
+        """Returns a dictionary that maps
+        each hyperparameter name to its description.
+
+        Returns
+        -------
+        dict[str, str]
+            Each item is like:
+            <hyperparameter name>: <description>
+        """
         
-        hps = {}
+        hp_name_to_description = {
+            hp_name: field_info.description
+            for hp_name, field_info in cls.model_fields.items()
+        }
         
-        # Iterate over all slots in the action
-        for i, hp in enumerate(action):
-            
-            # Find all numberic hyperparameters
-            hp_name = cls.numeric_hp_names()[i]
-            
-            # Get the HP type, which is either float or int
-            hp_type = cls.hp_type(hp_name)
-            
-            # Lower and upper bounds
-            hp_min, hp_max = bounds[hp_name] 
-            
-            # Recover the HP value        
-            hp = hp_type(hp * (hp_max - hp_min) + hp_min)
-            
-            hps[hp_name] = hp
-            
-        return cls(**hps)
+        return hp_name_to_description
     

@@ -11,6 +11,13 @@ class CategoricalHP(StrEnum):
         return f"'{str(self)}'"
     
     @classmethod
+    def level_values(cls) -> tuple[str]:
+        """Values, i.e., string representations, of all levels.
+        """
+        
+        return tuple(cls)
+    
+    @classmethod
     def from_index(cls, idx: int) -> Self:
         """Returns the level of this category 
         based on the given level index.
