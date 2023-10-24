@@ -1,7 +1,7 @@
 from .priority_queue import PriorityQueue
-from .ordered_item import OrderedItem
+from .comparable_item import ComparableItem
 
 __all__ = [
     "PriorityQueue",
-    "OrderedItem"
+    "ComparableItem"
 ]

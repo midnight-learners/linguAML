@@ -4,8 +4,8 @@ from pydantic import BaseModel
 class DatasetDescription(BaseModel):
     
     name: str
-    abstract: str
-    summary: str
+    abstract: Optional[str] = None
+    summary: Optional[str] = None
     variable_info: Optional[str] = None
     
     @classmethod
@@ -47,11 +47,13 @@ class DatasetDescription(BaseModel):
         lines.append(f"# {self.name}\n")
         
         # Abstract
-        lines.append(f"{self.abstract}\n")
+        if self.abstract is not None:
+            lines.append(f"{self.abstract}\n")
         
         # Summary
-        lines.append("## Summary\n")
-        lines.append(self.summary)
+        if self.summary is not None:
+            lines.append("## Summary\n")
+            lines.append(self.summary)
         
         # Variable information
         if self.variable_info is not None:
