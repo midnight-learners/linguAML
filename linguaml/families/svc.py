@@ -24,24 +24,28 @@ class SVCConfig(HPConfig):
         [Positive number]
         """
     )
+    
     kernel: Kernel = Field(
         description=f"""
         Specifies the kernel type to be used in the algorithm.
         [Possisble values: {Kernel.level_values()}]
         """
     )
+    
     gamma: float = Field(
         description=f"""
         Kernel coefficient for 'rbf', 'poly' and 'sigmoid'.
         [Positive number]
         """
     )
+    
     tol: float = Field(
         description="""
         Tolerance for stopping criterion.
         [Positive number]
         """
     )
+    
     decision_function_shape: DecisionFunctionShape = Field(
         description=f"""
         Whether to return a one-vs-rest ('ovr') decision function of shape (n_samples, n_classes) as all other classifiers, 

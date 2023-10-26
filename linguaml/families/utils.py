@@ -1,5 +1,6 @@
 from .base import Family
 from .svc import SVCFamily
+from .logistic import LogisticRegressionFamily
 
 def get_family(name: str) -> Family:
     """Gets the model family by its name.
@@ -22,6 +23,9 @@ def get_family(name: str) -> Family:
         
         case "svc":
             return SVCFamily
+        
+        case "logistic":
+            return LogisticRegressionFamily
         
         case _:
             raise ValueError(f"unkown model family: {name}")
