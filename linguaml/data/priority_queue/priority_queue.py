@@ -8,7 +8,7 @@ class PriorityQueue:
             self,
             get_priority: Optional[Callable[[Any], float]] = None,
         ) -> None:
-        """Initializes an empty priority queue of ordered items.
+        """Initialize an empty priority queue of ordered items.
         """
         
         methods = {}
@@ -29,7 +29,7 @@ class PriorityQueue:
         return len(self._data)
     
     def is_empty(self) -> bool:
-        """Checks whether the queue is empty.
+        """Check whether the queue is empty.
 
         Returns
         -------
@@ -40,7 +40,7 @@ class PriorityQueue:
         return len(self) == 0
         
     def push(self, item: Any) -> None:
-        """Pushes an item into the queue.
+        """Push an item into the queue.
 
         Parameters
         ----------
@@ -51,7 +51,7 @@ class PriorityQueue:
         heappush(self._data, self._ComparableItem(item))
         
     def pop(self) -> Any:
-        """Pops the item with the highest priority.
+        """Pop the item with the highest priority.
 
         Returns
         -------
@@ -66,7 +66,7 @@ class PriorityQueue:
         return item
     
     def peek_first_n_items(self, n: int) -> list[Any]:
-        """Gets the first several items with highest priorities.
+        """Get the first several items with highest priorities.
 
         Parameters
         ----------
@@ -91,7 +91,7 @@ class PriorityQueue:
         return items
     
     def extend(self, iterable: Iterable[Any]) -> None:
-        """Extends the queue with a collection of iterable ordered items.
+        """Extend the queue with a collection of iterable ordered items.
 
         Parameters
         ----------
@@ -109,3 +109,9 @@ class PriorityQueue:
         
         # Make it a heap
         heapify(self._data)
+        
+    def clear(self) -> None:
+        """Clear the queue.
+        """
+        
+        self._data.clear()
