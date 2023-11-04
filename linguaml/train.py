@@ -135,7 +135,6 @@ def play_one_episode(
                 f"Accuracy: {reward}",
                 "Model fitting exceeds time limit"
             ])
-            
             message = "; ".join(message_parts)
             
             # Warning log
@@ -146,7 +145,7 @@ def play_one_episode(
             message = "; ".join(message_parts)
             logger.info(message)
             
-        # Compute advantage using moving average technique
+        # Compute advantage using moving average algorithm
         advantage = advantage_calculator(reward)
             
         # Transition sample

@@ -39,13 +39,15 @@ def train(
     
     # Imports
     from torch.optim import Adam
-    from ...train import train, logger
-    from ...env import Env
-    from ...data.dataset import load_dataset
-    from ...data.replay_buffer import ReplayBuffer
-    from ...families import get_family
-    from ...agent import Agent
-    from ...advantage import AdvantageCalculator
+    
+    # Imports from this package
+    from linguaml.train import train, logger
+    from linguaml.env import Env
+    from linguaml.data.dataset import load_dataset
+    from linguaml.data.replay_buffer import ReplayBuffer
+    from linguaml.families import get_family
+    from linguaml.agent import Agent
+    from linguaml.advantage import AdvantageCalculator
     
     # Set the log file path
     logger.log_filepath = log_filepath

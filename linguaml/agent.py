@@ -19,9 +19,9 @@ from .families.base import Family
 
 class DistributionFamily(Enum):
     
-    Normal = Normal
-    Cauchy = Cauchy
-    Beta = Beta
+    NORMAL = Normal
+    CAUCHY = Cauchy
+    BETA = Beta
     
     @classmethod
     def from_name(cls, name: str) -> Self:
@@ -45,11 +45,11 @@ class DistributionFamily(Enum):
         
         match name:
             case "normal" | "guassian":
-                return DistributionFamily.Normal
+                return DistributionFamily.NORMAL
             case "cauchy":
-                return DistributionFamily.Cauchy
+                return DistributionFamily.CAUCHY
             case "beta":
-                return DistributionFamily.Beta
+                return DistributionFamily.BETA
             
 class Agent(nn.Module):
     
@@ -59,7 +59,7 @@ class Agent(nn.Module):
             self,
             family: Family,
             hidden_size: int = 128,
-            cont_dist_family: DistributionFamily | str = DistributionFamily.Normal
+            cont_dist_family: DistributionFamily | str = DistributionFamily.NORMAL
         ) -> None:
         
         super().__init__()
@@ -152,7 +152,7 @@ class Agent(nn.Module):
         return action
         
     def forward(self, state: Tensor) -> Distribution:
-        """_summary_
+        """Generate a distribution to sample an action from.
 
         Parameters
         ----------
