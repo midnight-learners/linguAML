@@ -53,14 +53,23 @@ class PerformanceResultBuffer:
         # If the queue is full (the internal capacity is reached), 
         # remove the low performance results
         if len(self._results) > self._internal_capacity:
-            # Throw away the low performance results
-            results_to_keep = self._results.peek_first_n_items(self._capacity)
+            self._reorganize()
             
-            # Clear the queue
-            self._results.clear()
-            
-            # Push the high performance results back to the queue
-            self._results.extend(results_to_keep)
+    def extend(self, results: list[PerformanceResult]) -> None:
+        """Extend the buffer with a list of results.
+        
+        Parameters
+        ----------
+        results : list[PerformanceResult]
+            The results to be pushed.
+        """
+        
+        self._results.extend(results)
+        
+        # If the queue is full (the internal capacity is reached), 
+        # remove the low performance results
+        if len(self._results) > self._internal_capacity:
+            self._reorganize()
             
     def peek_first_n_high_performance_results(self, n: int) -> list[PerformanceResult]:
         """Peek the first n high performance results in the buffer.
@@ -97,3 +106,17 @@ class PerformanceResultBuffer:
         n_results = min(len(self._results), self._capacity)
         
         return list(self._results.peek_first_n_items(n_results))
+    
+    def _reorganize(self) -> None:
+        """Reorganize the buffer by throwing away the low performance results.
+        """
+        
+        # Throw away the low performance results
+        results_to_keep = self._results.peek_first_n_items(self._capacity)
+        
+        # Clear the queue
+        self._results.clear()
+        
+        # Push the high performance results back to t
+        # he queue
+        self._results.extend(results_to_keep)
