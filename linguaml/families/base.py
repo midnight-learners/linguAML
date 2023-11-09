@@ -12,6 +12,13 @@ class Family(ABC):
     hp_config_type: type[HPConfig]
     
     @classmethod
+    def name(cls) -> str:
+        """The name of the model family.
+        """
+        
+        return cls.model_type.__name__
+    
+    @classmethod
     def hp(cls) -> type[HPConfig]:
         """The abstract class of the hyperparameter configuration.
         This is equivalent to the attribute `hp_config_type`.
@@ -39,6 +46,13 @@ class Family(ABC):
         """
         
         return cls.hp_config_type.n_categorical_hps()
+    
+    @classmethod
+    def hp_names(cls) -> tuple[str]:
+        """Names of all hyperparameters.
+        """
+
+        return cls.hp_config_type.hp_names()
     
     @classmethod
     def numeric_hp_names(cls) -> tuple[str]:

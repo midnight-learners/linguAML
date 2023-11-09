@@ -6,10 +6,12 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score
 from .data.dataset import Dataset
 from .families.base import Family
+from .hp import HPConfig
 from .hp.bounds import NumericHPBounds
 from .action import (
     calc_action_dim,
-    convert_action_to_hp_config
+    convert_action_to_hp_config,
+    convert_hp_config_to_action
 )
 
 class Env:
@@ -123,18 +125,42 @@ class Env:
         
         return init_state
     
-    def step(self, action: Iterable[float]) -> tuple[np.ndarray, Optional[float]]:
+    def step(
+            self, 
+            action: Optional[Iterable[float]] = None,
+            *,
+            hp_config: Optional[HPConfig] = None
+        ) -> tuple[np.ndarray, Optional[float]]:
         
-        # Generate the next state
-        self._actions_taken.append(action)
-        state = np.array(self._actions_taken)
+        if action is not None and hp_config is None:
         
-        # Create the hyperparameter configuation from the action taken
-        hp_config = convert_action_to_hp_config(
-            action=action,
-            family=self._family,
-            numeric_hp_bounds=self._numeric_hp_bounds
-        )
+            # Generate the next state
+            self._actions_taken.append(action)
+            state = np.array(self._actions_taken)
+            
+            # Create the hyperparameter configuation from the action taken
+            hp_config = convert_action_to_hp_config(
+                action=action,
+                family=self._family,
+                numeric_hp_bounds=self._numeric_hp_bounds
+            )
+        
+        elif hp_config is not None and action is None:
+            
+            # Convert to action
+            action = convert_hp_config_to_action(
+                hp_config=hp_config,
+                numeric_hp_bounds=self._numeric_hp_bounds
+            )
+            
+            # Generate the next state
+            self._actions_taken.append(action)
+            state = np.array(self._actions_taken)
+            
+        else:
+            raise ValueError(
+                "One and only one of the arguments 'action' and 'hp_config' must be specified."
+            )
         
         # Difine the model with the hyperparameter configuation
         model = self._family.define_model(

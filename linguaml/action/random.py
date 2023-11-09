@@ -45,6 +45,33 @@ def generate_random_action(
     
     return action
 
+def generate_random_hp_config(
+        family: Family,
+        numeric_hp_bounds: NumericHPBounds
+    ) -> HPConfig:
+    """Generate a random hyperparameter configuration.
+    
+    Parameters
+    ----------
+    family : Family
+        Model family.
+    
+    numeric_hp_bounds : NumericHPBounds
+        Lower and upper bounds of the numeric hyperparameters.
+
+    Returns
+    -------
+    HPConfig
+        A random hyperparameter configuration.
+    """
+    
+    action = generate_random_action(family)
+    hp_config = convert_action_to_hp_config(action, family, numeric_hp_bounds)
+    
+    return hp_config
+    
+    
+
 def generate_random_hp_configs(
         n: int,
         family: Family,
@@ -71,8 +98,7 @@ def generate_random_hp_configs(
     
     hp_configs = []
     for _ in range(n):
-        action = generate_random_action(family)
-        hp_config = convert_action_to_hp_config(action, family, numeric_hp_bounds)
+        hp_config = generate_random_hp_config(family, numeric_hp_bounds)
         hp_configs.append(hp_config)
         
     return hp_configs

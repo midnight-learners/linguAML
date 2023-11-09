@@ -5,7 +5,7 @@ from .action_2_hp_config import (
     convert_action_to_hp_config
 )
 from .hp_config_2_action import convert_hp_config_to_action
-from .random import generate_random_action, generate_random_hp_configs
+from .random import generate_random_action, generate_random_hp_config
 
 __all__ = [
     "calc_action_dim",
@@ -14,5 +14,5 @@ __all__ = [
     "extract_cont_action",
     "extract_disc_action",
     "generate_random_action",
-    "generate_random_hp_configs"
+    "generate_random_hp_config"
 ]
