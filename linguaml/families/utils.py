@@ -2,6 +2,8 @@ from .base import Family
 from .svc import SVCFamily
 from .logistic import LogisticRegressionFamily
 from .random_forest_classifier import RandomForestClassifierFamily
+from .lgbm_classifier import LGBMClassifierFamily
+from .xgboost_classifier import XGBClassifierFamily
 
 def get_family(name: str) -> Family:
     """Gets the model family by its name.
@@ -30,6 +32,12 @@ def get_family(name: str) -> Family:
         
         case "random_forest_classifier":
             return RandomForestClassifierFamily
+        
+        case "lgbm_classifier":
+            return LGBMClassifierFamily
+        
+        case "xgboost_classifier":
+            return XGBClassifierFamily
         
         case _:
             raise ValueError(f"unkown model family: {name}")
