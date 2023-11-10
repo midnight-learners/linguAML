@@ -38,6 +38,13 @@ class PerformanceResultBuffer:
         self._results = PriorityQueue(
             get_priority=lambda result: -result.accuracy
         )
+        
+    @property
+    def capacity(self) -> int:
+        """The capacity of the buffer.
+        """
+        
+        return self._capacity
     
     def push(self, result: PerformanceResult) -> None:
         """Push a new result to the buffer.
