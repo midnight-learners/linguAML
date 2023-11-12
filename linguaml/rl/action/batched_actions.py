@@ -1,10 +1,11 @@
 from typing import Self
 from numpy import ndarray
 import numpy as np
+import torch
 from torch import Tensor
 
 # Imports from this package
-from linguaml.types import Number, Vector, check_vector
+from linguaml.types import Number, NumberList, is_number_list
 from linguaml.tolearn.families.base import Family
 from linguaml.tolearn.hp import HPConfig, CategoricalHP
 from linguaml.tolearn.hp.bounds import NumericHPBounds
@@ -20,11 +21,11 @@ class BatchedActions(dict):
     def __setitem__(
             self, 
             hp_name: str, 
-            values: Vector | ndarray | Tensor
+            values: NumberList | ndarray | Tensor
         ) -> None:
         
         # Convert value to a number
-        if check_vector(values):
+        if is_number_list(values):
             values = np.array(values)
         elif isinstance(values, ndarray):
             assert len(values.shape) == 1,\
@@ -58,9 +59,13 @@ class BatchedActions(dict):
     
     def to_actions(self) -> list[Action]:
         
+        # Actions
         actions = []
         
+        # Number of batches
         n_batches = len(next(iter(self.values())))
+        
+        # Iterate over batches
         for i in range(n_batches):
             hp_name_to_value =  {hp_name: values[i] for hp_name, values in self.items()}
             action = Action.from_dict(hp_name_to_value)
@@ -93,3 +98,17 @@ class BatchedActions(dict):
             lambda action: action.to_hp_config(family, numeric_hp_bounds),
             self.to_actions()
         ))
+    
+    def to_tensor_dict(self) -> dict[str, Tensor]:
+        """Convert the batched actions to a dictionary of tensors.
+
+        Returns
+        -------
+        dict[str, Tensor]
+            A dictionary mapping hyperparameter names to tensors.
+        """
+        
+        return {
+            hp_name: torch.tensor(values, dtype=torch.float32)
+            for hp_name, values in self.items()
+        }

@@ -1,8 +1,8 @@
-from .types import Number, Vector
-from .utils import check_vector
+from .types import Number, NumberList
+from .utils import is_number_list
 
 __all__ = [
     "Number",
-    "Vector",
-    "check_vector"
+    "NumberList",
+    "is_number_list"
 ]

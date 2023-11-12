@@ -1,6 +1,6 @@
 from .types import Number
 
-def check_vector(object: object) -> bool:
+def is_number_list(object: object) -> bool:
     """Check if an object is a vector.
 
     Parameters

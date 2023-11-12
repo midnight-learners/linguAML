@@ -1,5 +1,6 @@
 from typing import Self
 from numpy import ndarray
+import torch
 from torch import Tensor
 
 # Imports from this package
@@ -90,3 +91,18 @@ class Action(dict):
         hp_config = family.hp()(**hps)
         
         return hp_config
+
+    def to_tensor_dict(self) -> dict[str, Tensor]:
+        """Convert the action to a dictionary of tensors.
+
+        Returns
+        -------
+        dict[str, Tensor]
+            A dictionary mapping hyperparameter names to tensors.
+        """
+        
+        return {
+            hp_name: torch.tensor(values, dtype=torch.float32)
+            for hp_name, values in self.items()
+        }
+        
