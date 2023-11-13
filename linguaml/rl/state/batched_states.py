@@ -1,4 +1,3 @@
-
 from numpy import ndarray
 import torch
 from torch import Tensor

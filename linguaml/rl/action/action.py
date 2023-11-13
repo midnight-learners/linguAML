@@ -102,7 +102,7 @@ class Action(dict):
         """
         
         return {
-            hp_name: torch.tensor(values, dtype=torch.float32)
-            for hp_name, values in self.items()
+            hp_name: torch.tensor(value, dtype=torch.float32)
+            for hp_name, value in self.items()
         }
         

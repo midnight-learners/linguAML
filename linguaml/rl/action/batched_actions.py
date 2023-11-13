@@ -28,15 +28,13 @@ class BatchedActions(dict):
         if is_number_list(values):
             values = np.array(values)
         elif isinstance(values, ndarray):
-            assert len(values.shape) == 1,\
-                "The value must be a one-dimensional array"
-            values = values
+            # Flatten the array
+            values = values.flatten()
         elif isinstance(values, Tensor):
-            assert len(values.shape) == 1,\
-                "The values must be a one-dimensional tensor"
-            values = values.detach().numpy()
+            # Flatten the tensor
+            values = values.detach().flatten().numpy()
         else:
-            raise TypeError(f"Unsupported type: {type(values)}")
+            raise TypeError(f"Unsupported type of action values: {type(values)}")
             
         super().__setitem__(hp_name, values)
         

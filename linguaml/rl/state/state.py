@@ -4,7 +4,7 @@ from torch import Tensor
 
 class State:
     
-    n_time_steps: int
+    # n_time_steps: int
     
     def __init__(self, data: ndarray) -> None:
         

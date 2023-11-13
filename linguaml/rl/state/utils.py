@@ -1,5 +1,10 @@
 # Imports from this package
 from linguaml.tolearn.families.base import Family
+from linguaml.rl.state import globals
+
+def set_state_time_steps(n_time_steps: int) -> None:
+    
+    globals.n_time_steps = n_time_steps
 
 def calc_n_state_features(family: Family) -> int:
     
