@@ -1,15 +1,17 @@
 from pydantic import Field
+from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.linear_model import LogisticRegression
-from functools import partial
+
+# Imports from this package
 from ..hp import HPConfig, CategoricalHP
-from .base import define_family_type
+from .model_family import ModelFamily
 
 class Penalty(CategoricalHP):
     
     NONE = "none"
     L1 = "l1"
     L2 = "l2"
-    Elasticnet = "elasticnet"
+    ELASTICNET = "elasticnet"
     
 class LogisticRegressionConfig(HPConfig):
     
@@ -55,8 +57,50 @@ class LogisticRegressionConfig(HPConfig):
         """
     )    
 
-LogisticRegressionFamily = define_family_type(
-    name="LogisticRegressionFamily",
-    model_type=partial(LogisticRegression, solver="saga"),
-    hp_config_type=LogisticRegressionConfig
+class ModifiedLogisticRegression(ClassifierMixin, BaseEstimator):
+    
+    def __init__(
+            self,
+            *,
+            penalty: str = "l2",
+            tol: float = 1e-4,
+            C: float = 1.0,
+            max_iter: int = 100,
+            l1_ratio: float = 0.5,
+            solver: str = "saga"
+        ):
+        
+        self.penalty = penalty
+        self.tol = tol
+        self.C = C
+        self.max_iter = max_iter
+        self.l1_ratio = l1_ratio
+        self.solver = solver
+        
+        self._model = LogisticRegression(
+            penalty=penalty,
+            tol=tol,
+            C=C,
+            max_iter=max_iter,
+            l1_ratio=l1_ratio,
+            solver=solver
+        )
+    
+    def fit(self, X, y):
+        
+        self._model.fit(X, y)
+        
+        return self
+    
+    def predict(self, X):
+        
+        return self._model.predict(X)
+    
+    def predict_proba(self, X):
+        
+        return self._model.predict_proba(X)
+
+logistic_regression_family = ModelFamily(
+    hp_config_type=LogisticRegressionConfig,
+    model_type=ModifiedLogisticRegression,
 )

@@ -8,7 +8,7 @@ from .data.transition import Transition, convert_to_transition_with_fields_as_li
 from .data.replay_buffer import ReplayBuffer
 from .env import Env
 from .agent import Agent
-from .advantage import AdvantageCalculator
+from .rl.advantage import AdvantageCalculator
 from .action import convert_action_to_hp_config
 
 def train(

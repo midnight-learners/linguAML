@@ -4,6 +4,8 @@ from collections import deque
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score
+
+# Imports from this package
 from .data.dataset import Dataset
 from .families.base import Family
 from .hp import HPConfig
@@ -46,15 +48,6 @@ class Env:
         
         # Dataset
         self._dataset = dataset
-        self._X_train, self._y_train = self._dataset.train.features.to_numpy(), self._dataset.train.targets.to_numpy().flatten()
-        self._X_valid, self._y_valid = self._dataset.valid.features.to_numpy(), self._dataset.valid.targets.to_numpy().flatten()
-        self._X_test, self._y_test = self._dataset.test.features.to_numpy(), self._dataset.test.targets.to_numpy().flatten()
-        
-        # Encode targets
-        label_encoder = LabelEncoder()
-        self._y_train = label_encoder.fit_transform(self._y_train)
-        self._y_valid = label_encoder.transform(self._y_valid)
-        self._y_test = label_encoder.transform(self._y_test)
         
         # State dimention
         self._state_dim = state_dim

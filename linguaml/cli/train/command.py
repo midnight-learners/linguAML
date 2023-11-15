@@ -45,9 +45,9 @@ def train(
     from linguaml.env import Env
     from linguaml.data.dataset import load_dataset
     from linguaml.data.replay_buffer import ReplayBuffer
-    from linguaml.families import get_family
+    from linguaml.tolearn.families import get_family
     from linguaml.agent import Agent
-    from linguaml.advantage import AdvantageCalculator
+    from linguaml.rl.advantage import AdvantageCalculator
     
     # Set the log file path
     logger.log_filepath = log_filepath

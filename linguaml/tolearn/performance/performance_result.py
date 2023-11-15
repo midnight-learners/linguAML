@@ -1,9 +1,7 @@
-from typing import Optional
 from pydantic import BaseModel
 
 # Imports from this package
-from linguaml.hp import HPConfig
-
+from linguaml.tolearn.hp import HPConfig
 
 class PerformanceResult(BaseModel):
     

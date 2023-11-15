@@ -1,7 +1,9 @@
 from pydantic import Field
 from sklearn.svm import SVC
+
+# Imports from this package
 from ..hp import HPConfig, CategoricalHP
-from .base import define_family_type
+from .model_family import ModelFamily
 
 class Kernel(CategoricalHP):
     
@@ -57,8 +59,7 @@ class SVCConfig(HPConfig):
         """
     )
 
-SVCFamily = define_family_type(
-    name="SVCFamily",
-    model_type=SVC,
-    hp_config_type=SVCConfig
+svc_family = ModelFamily(
+    hp_config_type=SVCConfig,
+    model_type=SVC
 )

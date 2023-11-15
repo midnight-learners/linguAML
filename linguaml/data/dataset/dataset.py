@@ -2,8 +2,11 @@ from typing import Self, Optional
 from pathlib import Path
 from pydantic import BaseModel, ConfigDict
 import json
+from numpy import ndarray
 import pandas as pd
 from ucimlrepo import fetch_ucirepo
+
+# Imports from this package
 from ...utils import mkdir_if_not_exists, dasherize
 from ...config import settings
 from .description import DatasetDescription
@@ -17,6 +20,20 @@ class DataSubset(BaseModel):
         frozen=True,
         arbitrary_types_allowed=True
     )
+    
+    @property
+    def X(self) -> ndarray:
+        """Features as a NumPy array.
+        """
+        
+        return self.features.to_numpy()
+    
+    @property
+    def y(self) -> ndarray:
+        """Targets as a 1D NumPy array.
+        """
+        
+        return self.targets.to_numpy().flatten()
   
 class Dataset(BaseModel):
     

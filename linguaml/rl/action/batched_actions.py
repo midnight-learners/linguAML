@@ -6,7 +6,7 @@ from torch import Tensor
 
 # Imports from this package
 from linguaml.types import Number, NumberList, is_number_list
-from linguaml.tolearn.families.base import Family
+from linguaml.tolearn.family import Family
 from linguaml.tolearn.hp import HPConfig, CategoricalHP
 from linguaml.tolearn.hp.bounds import NumericHPBounds
 from .action import Action
@@ -71,20 +71,8 @@ class BatchedActions(dict):
             
         return actions
     
-    def to_hp_configs(
-            self, 
-            family: Family, 
-            numeric_hp_bounds: NumericHPBounds
-        ) -> HPConfig:
+    def to_hp_configs(self) -> HPConfig:
         """Convert the action to an HPConfig instance.
-
-        Parameters
-        ----------
-        family : Family
-            Model family.
-            
-        numeric_hp_bounds : NumericHPBounds
-            Bounds of numeric hyperparameters.
 
         Returns
         -------
@@ -93,7 +81,7 @@ class BatchedActions(dict):
         """
         
         return list(map(
-            lambda action: action.to_hp_config(family, numeric_hp_bounds),
+            lambda action: action.to_hp_config(),
             self.to_actions()
         ))
     

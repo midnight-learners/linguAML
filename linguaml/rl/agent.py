@@ -1,5 +1,6 @@
 from typing import Self, Optional
 from enum import Enum
+import numpy as np
 
 import torch
 from torch import Tensor
@@ -9,9 +10,9 @@ from torch.distributions import Distribution, Normal, Cauchy, Beta, Categorical
 # Imports from this package
 from linguaml.tolearn.hp import CategoricalHP
 from linguaml.tolearn.hp.bounds import NumericHPBounds
-from linguaml.tolearn.families.base import Family
+from linguaml.tolearn.family import Family
 from .state import State, BatchedStates, calc_n_state_features
-from .action import Action, BatchedActions
+from .action import ActionConfig, Action, BatchedActions
 
 class ContinuousDistributionFamily(Enum):
     
@@ -61,14 +62,18 @@ class Agent(nn.Module):
         
         super().__init__()
         
-        # Model family to learn
+        # Family of the model to fine tune
         self._family = family
         
         # Bounds of numeric hyperparameters
         if not isinstance(numeric_hp_bounds, NumericHPBounds):
             numeric_hp_bounds = NumericHPBounds.model_validate(numeric_hp_bounds)
-        self._numeric_hp_bounds = numeric_hp_bounds
+        numeric_hp_bounds = numeric_hp_bounds
         
+        # Set up action configuration
+        ActionConfig.family = family
+        ActionConfig.numeric_hp_bounds = numeric_hp_bounds
+
         # Number of state features, i.e., the input features
         self._n_state_features = calc_n_state_features(family)
         
@@ -159,13 +164,6 @@ class Agent(nn.Module):
         
         return self._family
     
-    @property
-    def numeric_hp_bounds(self) -> NumericHPBounds:
-        """Bounds of numeric hyperparameters.
-        """
-        
-        return self._numeric_hp_bounds
-    
     def forward(self, state: State | BatchedStates) -> dict[str, Distribution]:
         """Forward pass. Generate distributions for all hyperparameters.
 
@@ -180,6 +178,7 @@ class Agent(nn.Module):
             A dictionary mapping hyperparameter names to distributions.
         """
         
+        # Convert input state to tensor
         input_tensor = state.to_tensor()
         
         x = self.fc(input_tensor)
@@ -263,7 +262,7 @@ class Agent(nn.Module):
         """
         
         # Generate distributions
-        distributions = self.forward(state)
+        self.forward(state)
             
         # Create an empty action or batched actions
         if isinstance(state, State):
@@ -277,7 +276,7 @@ class Agent(nn.Module):
         for hp_name in self._family.hp_names():
             
             # Get the distribution
-            distribution = distributions[hp_name]
+            distribution = self._distributions[hp_name]
             
             # Sample a value
             value = distribution.sample()
@@ -289,6 +288,35 @@ class Agent(nn.Module):
             
             # Set the action value
             action[hp_name] = value
+        
+        return action
+    
+    def select_random_action(self) -> Action:
+        """Select a random action.
+
+        Returns
+        -------
+        Action
+            A random action.
+        """
+        
+        # Create an empty action
+        action = Action()
+        
+        # Continuous actions
+        for hp_name in self._family.numeric_hp_names():
+                
+            # Generate a random number in [0, 1]
+            action[hp_name] = np.random.rand()
+            
+        # Discrete actions
+        for hp_name in self._family.categorical_hp_names():
+            
+            # Get the number of levels in the category
+            n_levels = self._family.n_levels_in_category(hp_name)
+            
+            # Generate a random integer in [0, n_levels - 1]
+            action[hp_name] = np.random.randint(0, n_levels)
         
         return action
      
@@ -318,7 +346,7 @@ class Agent(nn.Module):
         
         # Generate distributions if the state is provided
         if state is not None:
-            distributions = self.forward(state)
+            self.forward(state)
         
         # Ensure that the action and state are compatible
         if self._is_last_state_batched:
@@ -333,7 +361,7 @@ class Agent(nn.Module):
         for hp_name in self._family.hp_names():
             
             # Get the distribution
-            distribution = distributions[hp_name]
+            distribution = self._distributions[hp_name]
             
             # Compute the log probability of the action
             log_prob = distribution.log_prob(action.to_tensor_dict()[hp_name])

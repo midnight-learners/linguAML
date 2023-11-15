@@ -5,7 +5,7 @@ from scipy import stats
 from linguaml.hp import HPConfig
 from linguaml.hp.bounds import NumericHPBounds
 from linguaml.families.base import Family
-from .action_2_hp_config import convert_action_to_hp_config
+from .action.action_2_hp_config import convert_action_to_hp_config
 
 def generate_random_action(
         family: Family,

@@ -1,7 +1,9 @@
 from pydantic import Field
 from lightgbm import LGBMClassifier
-from linguaml.hp import HPConfig, CategoricalHP
-from .base import define_family_type
+
+# Imports from this package
+from ..hp import HPConfig, CategoricalHP
+from .model_family import ModelFamily
 
 class BoostingType(CategoricalHP):
 
@@ -74,12 +76,10 @@ class LGBMClassifierConfig(HPConfig):
         """
     )
 
-LGBMClassifierFamily = define_family_type(
-    name="LGBMClassifierFamily",
+lgbm_classifier_family = ModelFamily(
+    hp_config_type=LGBMClassifierConfig,
     model_type=LGBMClassifier,
-    hp_config_type=LGBMClassifierConfig
 )
-
 
 """
 Other possible parameters:

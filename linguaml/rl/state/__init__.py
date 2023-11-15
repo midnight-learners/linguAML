@@ -1,12 +1,13 @@
-from .utils import set_state_time_steps, calc_n_state_features
+from .utils import calc_n_state_features
+from .state_unit import StateUnit
 from .state import State
 from .batched_states import BatchedStates
-from .globals import n_time_steps
+from .config import StateConfig
 
 __all__ = [
-    "set_state_time_steps",
     "calc_n_state_features",
+    "StateUnit",
     "State",
     "BatchedStates",
-    "n_time_steps"
+    "StateConfig"
 ]

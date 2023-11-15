@@ -1,5 +1,6 @@
 from typing import Self
 from enum import StrEnum
+from numpy import ndarray
 import numpy as np
 
 class CategoricalHP(StrEnum):
@@ -36,6 +37,23 @@ class CategoricalHP(StrEnum):
         return tuple(cls.__members__.values())[idx]
     
     @classmethod
+    def from_one_hot(cls, one_hot: ndarray) -> Self:
+        """Constructs a member from the given one-hot encoding vector.
+        
+        Parameters
+        ----------
+        one_hot : ndarray
+            One-hot encoding vector.
+
+        Returns
+        -------
+        Self
+            Member.
+        """
+        
+        return cls.from_index(np.argmax(one_hot))
+    
+    @classmethod
     def n_levels(cls) -> int:
         """Total number of levels in this category.
         """
@@ -50,7 +68,7 @@ class CategoricalHP(StrEnum):
         return tuple(self.__class__).index(self)
     
     @property
-    def one_hot(self) -> np.ndarray:
+    def one_hot(self) -> ndarray:
         """The one-hot encoding vector of this level.
         """
 

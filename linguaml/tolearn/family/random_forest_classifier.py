@@ -1,8 +1,9 @@
 from pydantic import Field
 from sklearn.ensemble import RandomForestClassifier
 
-from linguaml.hp import HPConfig, CategoricalHP
-from .base import define_family_type
+# Imports from this package
+from ..hp import HPConfig, CategoricalHP
+from .model_family import ModelFamily
 
 class Criterion(CategoricalHP):
     
@@ -35,8 +36,7 @@ class RandomForestClassifierConfig(HPConfig):
         """
     )
 
-RandomForestClassifierFamily = define_family_type(
-    name="RandomForestClassifierFamily",
+random_forest_classifier_family = ModelFamily(
+    hp_config_type=RandomForestClassifierConfig,
     model_type=RandomForestClassifier,
-    hp_config_type=RandomForestClassifierConfig
 )
