@@ -138,7 +138,9 @@ class Action(ActionConfig, dict):
         # Restore numeric hyperparameters
         for hp_name in self.family.hp().numeric_hp_names():
             bounds = self.numeric_hp_bounds.get_bounds(hp_name)
-            hps[hp_name] = (bounds.max - bounds.min) * self[hp_name] + bounds.min
+            hp_type = self.family.hp().hp_type(hp_name)
+            hp = hp_type((bounds.max - bounds.min) * self[hp_name] + bounds.min)
+            hps[hp_name] = hp
             
         # Restore categorical hyperparameters
         for hp_name in self.family.hp().categorical_hp_names():
