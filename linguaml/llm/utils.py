@@ -1,7 +1,7 @@
 import json
 
 # Imports from this package
-from linguaml.families.base import Family
+from linguaml.tolearn.family import Family
 
 def get_hp_config_description(family: Family) -> str:
     """Get the description of the hyperparameter configuration.

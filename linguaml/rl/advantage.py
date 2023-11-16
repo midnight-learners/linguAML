@@ -47,6 +47,18 @@ class AdvantageCalculator:
         return self.calculate_advantage(reward)
         
     def calculate_advantage(self, reward: float) -> float:
+        """Calculate the advantage of the given reward
+
+        Parameters
+        ----------
+        reward : float
+            Current received reward.
+
+        Returns
+        -------
+        float
+            Advantage of the given reward.
+        """
         
         baseline = self.calculate_baseline(reward)
         advantage = reward - baseline
@@ -54,6 +66,19 @@ class AdvantageCalculator:
         return advantage
         
     def calculate_baseline(self, reward: float) -> float:
+        """Calculate the baseline of the given reward 
+        by taking the moving average over previous rewards.
+
+        Parameters
+        ----------
+        reward : float
+            Current received reward.
+
+        Returns
+        -------
+        float
+            Baseline of the given reward.
+        """
         
         match self._moving_average_alg:
             

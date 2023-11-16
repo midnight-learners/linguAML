@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Self, Optional
 from enum import Enum
 
 # Imports from this package
@@ -17,6 +17,26 @@ class Family(Enum):
     RANDOM_FOREST_CLASSIFIER = random_forest_classifier_family
     LGBM_CLASSIFIER = lgbm_classifier_family
     XGB_CLASSIFIER = xgb_classifier_family
+    
+    @classmethod
+    def from_name(cls, name: str) -> Self:
+        """Returns the model family based on the given name.
+
+        Parameters
+        ----------
+        name : str
+            Model family name.
+
+        Returns
+        -------
+        Self
+            Model family.
+        """
+        
+        # Convert to upper case
+        name = name.strip().upper()
+        
+        return Family._member_map_[name]
     
     def name(self) -> str:
         """The name of the model family.

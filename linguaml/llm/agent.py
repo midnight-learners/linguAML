@@ -1,9 +1,9 @@
 # Imports from this package
 from .schemas import ChatModel, SystemMessage, UserMessage
 from .utils import get_hp_config_description, get_hp_output_format
-from linguaml.families.base import Family
-from linguaml.data.performance_result_buffer import PerformanceResultBuffer
-from linguaml.hp import HPConfig
+from linguaml.tolearn.family import Family
+from linguaml.tolearn.performance import PerformanceResultBuffer
+from linguaml.tolearn.hp import HPConfig
 
 prompt_template = """
 You are fine tuning a {model_name} model.

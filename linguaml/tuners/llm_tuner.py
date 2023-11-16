@@ -1,9 +1,11 @@
 # Imports from this package
-from linguaml.logger import logger
-from linguaml.env import Env
+from linguaml.rl.env import Env
 from linguaml.llm import LLMAgent
-from linguaml.data.replay_buffer import ReplayBuffer
-from linguaml.data.performance_result_buffer import PerformanceResult, PerformanceResultBuffer
+from linguaml.rl.replay_buffer import ReplayBuffer
+from linguaml.tolearn.performance import PerformanceResult, PerformanceResultBuffer
+from linguaml.logger import logger
+
+logger = logger.bind(tuner_role="llm")
 
 class LLMTuner:
     
@@ -20,21 +22,21 @@ class LLMTuner:
         self._replay_buffer = replay_buffer
         self._performance_result_buffer = performance_result_buffer
     
-    def tune(self, n_steps: int, start_step: int = 1) -> None:
-        """Tune the hyperparameters for n steps.
-
+    def tune(self, n_epoch: int, start_epoch: int = 1) -> None:
+        """Tune the hyperparameters for n epochs.
+        
         Parameters
         ----------
-        n_steps : int
-            The number of steps to tune the hyperparameters.
-        start_step : int, optional
-            The step number to start tuning, by default 1.
+        n_epoch : int
+            Number of epochs to tune.
+        start_epoch : int, optional
+            The starting epoch number, by default 1.
         """
         
-        for step in range(start_step, n_steps + 1):
-            self.tune_one_step(step=step)
+        for epoch in range(start_epoch, n_epoch + 1):
+            self.tune_one_epoch(epoch)
         
-    def tune_one_step(self, step: int = 1) -> None:
+    def tune_one_epoch(self, epoch: int = 1) -> None:
         """Tune the hyperparameters for one step.
 
         Parameters
@@ -44,7 +46,7 @@ class LLMTuner:
         """
         
         # Set the epoch number for logging
-        logger.extra["step"] = step
+        logger.configure(extra={"epoch": epoch})
         
         # Ask LLM to generate a new hyperparameter configuration setting
         hp_config = self._agent.select_hp_cnofig(self._performance_result_buffer)
@@ -52,32 +54,17 @@ class LLMTuner:
         # Interact with the environment
         next_state, reward = self._env.step(hp_config=hp_config)
         
-        # Logging
-        message_parts = [
-            f"Step: {logger.extra['step']}",
-            f"Hyperparameters: {hp_config}"
-        ]
-
-        # Log the performance result
-        # Warn the user if the model fitting exceeds the time limit
-        if reward is None:
-            message_parts.extend([
-                f"Accuracy: {reward}",
-                "Model fitting exceeds time limit"
-            ])
-            message = "; ".join(message_parts)
-            logger.warning(message)
+        # Create a performance result
+        performance_result = PerformanceResult(
+            hp_config=hp_config,
+            accuracy=reward if reward is not None else 0.0,
+        )
         
-        # Log the performance result
+        # Logging
+        if reward is None:
+            logger.warning(f"{performance_result}; Time limit exceeded when fitting the model")
         else:
-            message_parts.append(f"Accuracy: {reward}")
-            message = "; ".join(message_parts)
-            logger.info(message)
+            logger.info(performance_result)
             
         # Collect the performance result
-        self._performance_result_buffer.push(
-            PerformanceResult(
-                hp_config=hp_config,
-                accuracy=reward if reward is not None else 0.0,
-            )
-        )
+        self._performance_result_buffer.push(performance_result)

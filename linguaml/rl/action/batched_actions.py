@@ -9,9 +9,9 @@ from linguaml.types import Number, NumberList, is_number_list
 from linguaml.tolearn.family import Family
 from linguaml.tolearn.hp import HPConfig, CategoricalHP
 from linguaml.tolearn.hp.bounds import NumericHPBounds
-from .action import Action
+from .action import ActionConfig, Action
 
-class BatchedActions(dict):
+class BatchedActions(ActionConfig, dict):
     
     def __init__(self, *args, **kwargs) -> None:
         
@@ -54,6 +54,31 @@ class BatchedActions(dict):
         """
         
         return cls(hp_name_2_values)
+    
+    @classmethod
+    def from_actions(cls, actions: list[Action]) -> Self:
+        """Construct batched actions from a list of actions.
+
+        Parameters
+        ----------
+        actions : list[Action]
+            A list of actions.
+
+        Returns
+        -------
+        Self
+            Batched actions.
+        """
+        
+        # Create an empty batched actions
+        batched_actions = cls()
+        
+        # Iterate over hyperparameter names
+        for hp_name in cls.family.hp_names():
+            values = [action[hp_name] for action in actions]
+            batched_actions[hp_name] = values
+        
+        return batched_actions
     
     def to_actions(self) -> list[Action]:
         

@@ -40,8 +40,8 @@ class Env:
         # A buffer of actions and associated rewards
         self._action_reward_buffer = deque(maxlen=lookback)
         
-        # Reset env
-        self._initial_state = self.reset()
+        # Initial state
+        self._initial_state: Optional[State] = None
         
     @property
     def datasests(self) -> list[Dataset]:
@@ -51,8 +51,9 @@ class Env:
         return self._datasets
     
     @property
-    def initial_state(self) -> State:
+    def initial_state(self) -> Optional[State]:
         """Initial state.
+        None if the environment has never been reset.
         """
         
         return self._initial_state

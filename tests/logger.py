@@ -1,6 +1,6 @@
 import unittest
 from pathlib import Path
-from linguaml.logger import logger
+from linguaml._logger import logger
 
 class TestLogger(unittest.TestCase):
     
