@@ -15,7 +15,7 @@ class LGBMClassifierConfig(HPConfig):
     
     boosting_type: BoostingType = Field(
         description=f"""
-        ‘gbdt’, traditional Gradient Boosting Decision Tree. ‘dart’, Dropouts meet Multiple Additive Regression Trees. ‘rf’, Random Forest.
+        'gbdt', traditional Gradient Boosting Decision Tree. 'dart', Dropouts meet Multiple Additive Regression Trees. 'rf', Random Forest.
         [Possible values: {BoostingType.level_values()}]
         """
     )
@@ -83,9 +83,9 @@ lgbm_classifier_family = ModelFamily(
 
 """
 Other possible parameters:
-- learning_rate (float, optional (default=0.1)) – Boosting learning rate. You can use callbacks parameter of fit method to shrink/adapt learning rate in training using reset_parameter callback. Note, that this will ignore the learning_rate argument in training.
-- subsample_for_bin (int, optional (default=200000)) – Number of samples for constructing bins.
-- subsample (float, optional (default=1.)) – Subsample ratio of the training instance.
-- subsample_freq (int, optional (default=0)) – Frequency of subsample, <=0 means no enable.
-- colsample_bytree (float, optional (default=1.)) – Subsample ratio of columns when constructing each tree.
+- learning_rate (float, optional (default=0.1)) - Boosting learning rate. You can use callbacks parameter of fit method to shrink/adapt learning rate in training using reset_parameter callback. Note, that this will ignore the learning_rate argument in training.
+- subsample_for_bin (int, optional (default=200000)) - Number of samples for constructing bins.
+- subsample (float, optional (default=1.)) - Subsample ratio of the training instance.
+- subsample_freq (int, optional (default=0)) - Frequency of subsample, <=0 means no enable.
+- colsample_bytree (float, optional (default=1.)) - Subsample ratio of columns when constructing each tree.
 """
