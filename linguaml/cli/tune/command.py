@@ -44,6 +44,8 @@ def tune(
         
         # Set the log file path
         log_filepath = parent.joinpath(".log")
+        
+   
     
     # Load the training settings from files
     tuning_settings = {}
@@ -56,11 +58,23 @@ def tune(
     match role:
         
         case TunerRole.RL:
+            # Set the log file path
+            from linguaml.logger import set_log_filepath
+            from linguaml.tuners.rl_tuner import logger
+            set_log_filepath(logger, log_filepath)
+
+            # Tune
             from .rl import TuningSettings, tune
             tuning_settings = TuningSettings.model_validate(tuning_settings)
             tune(tuning_settings)
         
         case TunerRole.LLM:
+            # Set the log file path
+            from linguaml.logger import set_log_filepath
+            from linguaml.tuners.llm_tuner import logger
+            set_log_filepath(logger, log_filepath)
+            
+            # Tune
             from .llm import TuningSettings, tune
             tuning_settings = TuningSettings.model_validate(tuning_settings)
             tune(tuning_settings)
