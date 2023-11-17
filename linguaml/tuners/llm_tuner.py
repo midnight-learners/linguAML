@@ -1,6 +1,6 @@
 # Imports from this package
 from linguaml.rl.env import Env
-from linguaml.llm import LLMAgent
+from linguaml.llm.agent import Agent
 from linguaml.rl.replay_buffer import ReplayBuffer
 from linguaml.tolearn.performance import PerformanceResult, PerformanceResultBuffer
 from linguaml.logger import logger
@@ -12,7 +12,7 @@ class LLMTuner:
     def __init__(
             self,
             env: Env,
-            agent: LLMAgent,
+            agent: Agent,
             replay_buffer: ReplayBuffer,
             performance_result_buffer: PerformanceResultBuffer,
         ) -> None:
@@ -22,18 +22,19 @@ class LLMTuner:
         self._replay_buffer = replay_buffer
         self._performance_result_buffer = performance_result_buffer
     
-    def tune(self, n_epoch: int, start_epoch: int = 1) -> None:
+    def tune(self, n_epochs: int) -> None:
         """Tune the hyperparameters for n epochs.
         
         Parameters
         ----------
-        n_epoch : int
+        n_epochs : int
             Number of epochs to tune.
-        start_epoch : int, optional
-            The starting epoch number, by default 1.
         """
         
-        for epoch in range(start_epoch, n_epoch + 1):
+        # Reset state
+        self._env.reset()
+        
+        for epoch in range(1, n_epochs + 1):
             self.tune_one_epoch(epoch)
         
     def tune_one_epoch(self, epoch: int = 1) -> None:
@@ -49,14 +50,14 @@ class LLMTuner:
         logger.configure(extra={"epoch": epoch})
         
         # Ask LLM to generate a new hyperparameter configuration setting
-        hp_config = self._agent.select_hp_cnofig(self._performance_result_buffer)
+        action = self._agent.select_action(self._performance_result_buffer)
         
         # Interact with the environment
-        next_state, reward = self._env.step(hp_config=hp_config)
+        next_state, reward = self._env.step(action)
         
         # Create a performance result
         performance_result = PerformanceResult(
-            hp_config=hp_config,
+            hp_config=action.to_hp_config(),
             accuracy=reward if reward is not None else 0.0,
         )
         

@@ -2,8 +2,10 @@
 from .schemas import ChatModel, SystemMessage, UserMessage
 from .utils import get_hp_config_description, get_hp_output_format
 from linguaml.tolearn.family import Family
+from linguaml.tolearn.hp.bounds import NumericHPBounds
 from linguaml.tolearn.performance import PerformanceResultBuffer
 from linguaml.tolearn.hp import HPConfig
+from linguaml.rl.action import ActionConfig, Action
 
 prompt_template = """
 You are fine tuning a {model_name} model.
@@ -24,15 +26,23 @@ Your output should be in the valid JSON format of:
 Your output is (in JSON format):
 """
 
-class LLMAgent:
+class Agent:
     
     def __init__(
             self, 
             family: Family,
+            numeric_hp_bounds: NumericHPBounds,
             chat_model: ChatModel,
         ) -> None:
         
+        # Configure the action
+        ActionConfig.family = family
+        ActionConfig.numeric_hp_bounds = numeric_hp_bounds
+        
+        # Model family
         self._family = family
+        
+        # Chat model
         self._chat_model = chat_model
         
         # Get the description of the hyperparameter configuration
@@ -85,3 +95,13 @@ class LLMAgent:
         hp_config = self._family.hp().model_validate_json(message.content)
         
         return hp_config
+
+    def select_action(self, performance_result_buffer: PerformanceResultBuffer) -> Action:
+        
+        # Select a hyperparameter configuration
+        hp_config = self.select_hp_cnofig(performance_result_buffer)
+        
+        # Convert to an action
+        action = Action.from_hp_config(hp_config)
+        
+        return action
