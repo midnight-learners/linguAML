@@ -92,10 +92,14 @@ class Agent:
         )
         
         # Ask LLM to generate a new hyperparameter configuration setting
-        message = self._chat_model.invoke([
-            SystemMessage("You are a professional data scientist."),
-            UserMessage(prompt)
-        ])
+        try:
+            message = self._chat_model.invoke([
+                SystemMessage("You are a professional data scientist."),
+                UserMessage(prompt)
+            ])
+        except:
+            llm_logger.error("Failed to get responses from the LLM")
+            return None
         
         # Parse the hyperparameter configuration setting from LLM's output
         try:
