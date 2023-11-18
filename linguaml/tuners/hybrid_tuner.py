@@ -87,7 +87,10 @@ class HybridTuner:
             
     def sample_transitions(self) -> None:
         
-        while len(self._replay_buffer) < len(self._replay_buffer):
+        # Sample the first transition using RL agent
+        self.sample_using_rl_agent()
+        
+        while len(self._replay_buffer) < self._replay_buffer.capacity:
             
             # Sample transitions using LLM agent
             if random.random() < self._llm_agent_sampling_freq:
@@ -173,13 +176,19 @@ class HybridTuner:
         # Collect the performance result
         self._performance_result_buffer.push(performance_result)
         
+        # Compute advantage
+        advantage = self._advantage_calculator(reward)
+        
+        # Compute the log-probability
+        log_prob = self._rl_agent.log_prob(action)
+        
         # Collect the transition sample
         transition = Transition(
             state=state,
             action=action,
             reward=reward,
-            advantage=None,
-            log_prob=None
+            advantage=advantage,
+            log_prob=log_prob
         )
         self._replay_buffer.add(transition)
         

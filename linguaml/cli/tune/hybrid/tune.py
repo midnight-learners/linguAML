@@ -58,7 +58,9 @@ def tune(tuning_settings: TuningSettings) -> None:
         ),
         performance_result_buffer=PerformanceResultBuffer(
             capacity=tuning_settings.performance_result_buffer_capacity
-        )
+        ),
+        advantage_calculator=advantage_calculator,
+        llm_agent_sampling_freq=tuning_settings.llm_agent_sampling_freq
     )
 
     # Tune!
