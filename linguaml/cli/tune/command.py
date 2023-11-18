@@ -59,9 +59,9 @@ def tune(
         
         case TunerRole.RL:
             # Set the log file path
-            from linguaml.logger import set_log_filepath
-            from linguaml.tuners.rl_tuner import logger
-            set_log_filepath(logger, log_filepath)
+            from linguaml.loggers import set_log_filepath
+            from linguaml.loggers import rl_logger
+            set_log_filepath(rl_logger, log_filepath)
 
             # Tune
             from .rl import TuningSettings, tune
@@ -70,9 +70,9 @@ def tune(
         
         case TunerRole.LLM:
             # Set the log file path
-            from linguaml.logger import set_log_filepath
-            from linguaml.tuners.llm_tuner import logger
-            set_log_filepath(logger, log_filepath)
+            from linguaml.loggers import set_log_filepath
+            from linguaml.loggers import llm_logger
+            set_log_filepath(llm_logger, log_filepath)
             
             # Tune
             from .llm import TuningSettings, tune
@@ -80,5 +80,15 @@ def tune(
             tune(tuning_settings)
         
         case TunerRole.HYBRID:
-            pass
+            # Set the log file path
+            from linguaml.loggers import set_log_filepath
+            from linguaml.loggers import rl_logger, llm_logger, hybrid_logger
+            set_log_filepath(rl_logger, log_filepath)
+            set_log_filepath(llm_logger, log_filepath)
+            set_log_filepath(hybrid_logger, log_filepath)
+            
+            # Tune
+            from .hybrid import TuningSettings, tune
+            tuning_settings = TuningSettings.model_validate(tuning_settings)
+            tune(tuning_settings)
 

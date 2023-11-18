@@ -1,3 +1,5 @@
+from typing import Optional
+
 # Imports from this package
 from .schemas import ChatModel, SystemMessage, UserMessage
 from .utils import get_hp_config_description, get_hp_output_format
@@ -6,6 +8,7 @@ from linguaml.tolearn.hp.bounds import NumericHPBounds
 from linguaml.tolearn.performance import PerformanceResultBuffer
 from linguaml.tolearn.hp import HPConfig
 from linguaml.rl.action import ActionConfig, Action
+from linguaml.loggers import llm_logger
 
 prompt_template = """
 You are fine tuning a {model_name} model.
@@ -61,7 +64,7 @@ class Agent:
     def select_hp_cnofig(
             self, 
             performance_result_buffer: PerformanceResultBuffer
-        ) -> HPConfig:
+        ) -> Optional[HPConfig]:
         """Select a hyperparameter configuration setting 
         based on the historical performance results.
         
@@ -72,8 +75,9 @@ class Agent:
             
         Returns
         -------
-        HPConfig
-            The hyperparameter configuration setting.
+        Optional[HPConfig]
+            A hyperparameter configuration setting.
+            Return None if failed to select a hyperparameter configuration setting.
         """
         
         # Make prompt
@@ -92,14 +96,24 @@ class Agent:
             SystemMessage("You are a professional data scientist."),
             UserMessage(prompt)
         ])
-        hp_config = self._family.hp().model_validate_json(message.content)
+        
+        # Parse the hyperparameter configuration setting from LLM's output
+        try:
+            hp_config = self._family.hp().model_validate_json(message.content)
+        except:
+            llm_logger.error("Failed to parse the hyperparameter configuration setting from LLM's output")
+            return None
         
         return hp_config
 
-    def select_action(self, performance_result_buffer: PerformanceResultBuffer) -> Action:
+    def select_action(self, performance_result_buffer: PerformanceResultBuffer) -> Optional[Action]:
         
         # Select a hyperparameter configuration
         hp_config = self.select_hp_cnofig(performance_result_buffer)
+        
+        # Return None if failed to select a hyperparameter configuration setting
+        if hp_config is None:
+            return None
         
         # Convert to an action
         action = Action.from_hp_config(hp_config)

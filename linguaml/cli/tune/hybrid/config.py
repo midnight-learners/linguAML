@@ -3,6 +3,7 @@ from pydantic import BaseModel, ConfigDict
 
 # Imports from this package
 from linguaml.tolearn.hp.bounds import NumericHPBounds
+from linguaml.llm.openai.chat import OpenAIChatModelName
 
 class TuningSettings(BaseModel):
     
@@ -19,12 +20,15 @@ class TuningSettings(BaseModel):
     sma_period: int
     ema_alpha: float
     replay_buffer_capacity: int
-    n_timesteps_per_episode: int
+    performance_result_buffer_capacity: int
     n_steps_for_updating_agent: int
     batch_size: int
     min_batch_size: Optional[int] = None
     ppo_epsilon: float
     numeric_hp_bounds: NumericHPBounds
+    llm_agent_sampling_freq: float
+    chat_model_name: OpenAIChatModelName
+    temperature: float
     
     model_config = ConfigDict(
         frozen=True,

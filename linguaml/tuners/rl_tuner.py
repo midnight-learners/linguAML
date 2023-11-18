@@ -1,3 +1,4 @@
+from typing import Optional
 import numpy as np
 import torch
 from torch.optim import Optimizer
@@ -11,9 +12,7 @@ from linguaml.rl.replay_buffer import ReplayBuffer, ReplayBufferLoader
 from linguaml.rl.advantage import AdvantageCalculator
 from linguaml.rl.loss import ppo_loss
 from linguaml.tolearn.performance import PerformanceResult
-from linguaml.logger import logger
-
-logger = logger.bind(tuner_role="rl")
+from linguaml.loggers import rl_logger
 
 class RLTuner:
     
@@ -37,13 +36,14 @@ class RLTuner:
             batch_size: int,
             n_steps_for_updating_agent: int,
             optimizer: Optimizer,
-            ppo_epsilon: float
+            ppo_epsilon: float,
+            min_batch_size: Optional[int] = None
         ):
         
         for epoch in range(n_epochs):
             
             # Set the epoch by updating logger's extra
-            logger.configure(extra={"epoch": epoch + 1})
+            rl_logger.configure(extra={"epoch": epoch + 1})
             
             # Collect transitions
             self.sample_transitions(n_timesteps_per_episode=n_timesteps_per_episode)
@@ -52,12 +52,13 @@ class RLTuner:
             batched_transitions = BatchedTransitions.from_transitions(self._replay_buffer)
             batched_rewards = batched_transitions.reward
             avg_reward = np.mean(batched_rewards)
-            logger.info(f"Average sample reward: {avg_reward}")
+            rl_logger.info(f"Average sample reward: {avg_reward}")
             
             # Create a data loader that generates batched transitions
             replay_buffer_loader = ReplayBufferLoader(
                 self._replay_buffer,
-                batch_size=batch_size
+                batch_size=batch_size,
+                min_batch_size=min_batch_size
             )
             
             # Train the agent
@@ -110,12 +111,12 @@ class RLTuner:
             )
             if reward is None:
                 # Wrarning log
-                logger.warning(f"{performance_result}; Time limit exceeded when fitting the model")
+                rl_logger.warning(f"{performance_result}; Time limit exceeded when fitting the model")
                 
                 # Set the reward to 0
                 reward = 0.0
             else:
-                logger.info(performance_result)
+                rl_logger.info(performance_result)
             
             # Compute advantage using moving average algorithm
             advantage = self._advantage_calculator(reward)

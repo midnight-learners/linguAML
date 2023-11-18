@@ -44,4 +44,3 @@ def set_log_filepath(logger, filepath: Path | str) -> None:
         filepath,
         format=LOG_FORMAT,
     )
-    

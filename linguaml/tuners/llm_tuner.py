@@ -3,9 +3,7 @@ from linguaml.rl.env import Env
 from linguaml.llm.agent import Agent
 from linguaml.rl.replay_buffer import ReplayBuffer
 from linguaml.tolearn.performance import PerformanceResult, PerformanceResultBuffer
-from linguaml.logger import logger
-
-logger = logger.bind(tuner_role="llm")
+from linguaml.loggers import llm_logger
 
 class LLMTuner:
     
@@ -47,10 +45,14 @@ class LLMTuner:
         """
         
         # Set the epoch number for logging
-        logger.configure(extra={"epoch": epoch})
+        llm_logger.configure(extra={"epoch": epoch})
         
         # Ask LLM to generate a new hyperparameter configuration setting
         action = self._agent.select_action(self._performance_result_buffer)
+        
+        # If the action is None, then stop tuning
+        if action is None:
+            return
         
         # Interact with the environment
         next_state, reward = self._env.step(action)
@@ -63,9 +65,9 @@ class LLMTuner:
         
         # Logging
         if reward is None:
-            logger.warning(f"{performance_result}; Time limit exceeded when fitting the model")
+            llm_logger.warning(f"{performance_result}; Time limit exceeded when fitting the model")
         else:
-            logger.info(performance_result)
+            llm_logger.info(performance_result)
             
         # Collect the performance result
         self._performance_result_buffer.push(performance_result)
