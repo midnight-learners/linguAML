@@ -6,4 +6,4 @@ from linguaml.tolearn.hp import HPConfig
 class PerformanceResult(BaseModel):
     
     hp_config: HPConfig
-    accuracy: float
+    score: float

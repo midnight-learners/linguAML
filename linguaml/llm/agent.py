@@ -13,14 +13,14 @@ from linguaml.loggers import llm_logger
 prompt_template = """
 You are fine tuning a {model_name} model.
 Below are some of the high-performance hyperparameter configuration settings that you have tried, \
-along with their corresponding accuracy levels on the validation dataset:
+along with their corresponding score levels on the validation dataset:
 {performance_results_str}
 
 Please strictly refer to the following hyperparameter configuration specification for the {model_name}
 (*IMPORTANT*: the domain of each hyperparameter is enclosed by []):
 {hp_config_description}
 
-Please choose a new hyperparameter configuration setting to possibly achieve higher accuracy.
+Please choose a new hyperparameter configuration setting to possibly achieve higher score.
 (*IMPORTANT*: The hyperparameter configuration setting you choose must be different from what you have already tried!)
 
 Your output should be in the valid JSON format of:

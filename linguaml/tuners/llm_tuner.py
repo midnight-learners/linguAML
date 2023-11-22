@@ -60,7 +60,7 @@ class LLMTuner:
         # Create a performance result
         performance_result = PerformanceResult(
             hp_config=action.to_hp_config(),
-            accuracy=reward if reward is not None else 0.0,
+            score=reward if reward is not None else 0.0,
         )
         
         # Logging

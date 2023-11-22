@@ -30,7 +30,7 @@ class PerformanceResultBuffer:
         
         # High performance results stored in a priority queue
         self._results = PriorityQueue(
-            get_priority=lambda result: -result.accuracy
+            get_priority=lambda result: -result.score
         )
         
     @property
@@ -100,7 +100,7 @@ class PerformanceResultBuffer:
         Returns
         -------
         list[PerformanceResult]
-            The results in the buffer ordered by accuracy in descending order.
+            The results in the buffer ordered by score in descending order.
         """
         
         # Note that the number of results is limited by the capacity

@@ -117,7 +117,7 @@ class HybridTuner:
         # Log the performance result
         performance_result = PerformanceResult(
             hp_config=action.to_hp_config(),
-            accuracy=reward if reward is not None else 0.0
+            score=reward if reward is not None else 0.0
         )
         if reward is None:
             # Wrarning log
@@ -164,12 +164,15 @@ class HybridTuner:
         # Create a performance result
         performance_result = PerformanceResult(
             hp_config=action.to_hp_config(),
-            accuracy=reward if reward is not None else 0.0,
+            score=reward if reward is not None else 0.0,
         )
         
         # Logging
         if reward is None:
             llm_logger.warning(f"{performance_result}; Time limit exceeded when fitting the model")
+            
+            # Set the reward to 0
+            reward = 0.0
         else:
             llm_logger.info(performance_result)
             

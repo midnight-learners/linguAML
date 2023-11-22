@@ -10,6 +10,7 @@ def tune(tuning_settings: TuningSettings) -> None:
             load_dataset(name=name)
             for name in tuning_settings.dataset_names
         ],
+        performance_metric=tuning_settings.performance_metric,
         lookback=tuning_settings.lookback,
         fitting_time_limit=tuning_settings.fitting_time_limit,
         random_state=tuning_settings.random_state

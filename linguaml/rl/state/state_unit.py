@@ -65,8 +65,8 @@ class StateUnit(StateConfig):
         # Get the hyperparameter configuration
         hp_config = performance_result.hp_config
         
-        # The reward is the accuracy
-        reward = performance_result.accuracy
+        # The reward is the score
+        reward = performance_result.score
         
         # Convert to action
         action = Action.from_hp_config(hp_config)

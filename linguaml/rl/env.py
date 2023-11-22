@@ -1,13 +1,14 @@
-from typing import Optional, Iterable
+from typing import Optional
 from collections import deque
 import multiprocessing
 from numpy import ndarray
 import numpy as np
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, f1_score
 
 # Imports from this package
 from linguaml.types import Model
 from linguaml.data.dataset import Dataset
+from linguaml.tolearn.performance import PerformanceMetric
 from .action import Action
 from .state import StateConfig, State
 
@@ -17,10 +18,14 @@ class Env:
             self,
             datasets: list[Dataset],
             *,
+            performance_metric: PerformanceMetric = PerformanceMetric.ACCURACY,
             lookback: int = 10,
             fitting_time_limit: float = 5.0,
             random_state: Optional[int] = None,
         ) -> None:
+        
+        # Performance metric
+        self._performance_metric = performance_metric
         
         # Set up state configuation
         StateConfig.lookback = lookback
@@ -158,12 +163,13 @@ class Env:
                     dataset.train.X,
                     dataset.train.y,
                     dataset.valid.X,
-                    dataset.valid.y
+                    dataset.valid.y,
+                    self._performance_metric
                 )
             )
             
             try:
-                # Compute the accuracy on validation dataset
+                # Compute the score on validation dataset
                 reward = result.get(timeout=self._fitting_time_limit)
 
             # If the fitting time limit is exceeded,
@@ -178,7 +184,8 @@ def fit_model(
         X_train: ndarray, 
         y_train: ndarray,
         X_valid: ndarray,
-        y_valid: ndarray
+        y_valid: ndarray,
+        performance_metric: PerformanceMetric = PerformanceMetric.ACCURACY,
     ) -> float:
 
     # Fit the model
@@ -186,6 +193,14 @@ def fit_model(
     
     # Compute the accuracy on validation dataset
     y_pred = model.predict(X_valid)
-    reward = accuracy_score(y_valid, y_pred)
     
+    # Compute the reward based on the performance metric
+    match performance_metric:
+        
+        case PerformanceMetric.ACCURACY:
+            reward = accuracy_score(y_valid, y_pred)
+        
+        case PerformanceMetric.F1_SCORE:
+            reward = f1_score(y_valid, y_pred, average="macro")
+
     return reward

@@ -11,6 +11,7 @@ class TuningSettings(BaseModel):
     family_name: str
     random_state: Optional[int] = None
     n_epochs: int
+    performance_metric: str
     lookback: int
     fitting_time_limit: float
     replay_buffer_capacity: int
