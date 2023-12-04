@@ -36,7 +36,7 @@
 /.conf
 
 # Experiments
-/experiments
+/experiments*
 
 # Auxiliary files when compiling LaTeX 
 **/*.aux

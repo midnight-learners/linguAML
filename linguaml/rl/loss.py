@@ -11,6 +11,9 @@ def ppo_loss(
     
     ratio = torch.exp(curr_log_prob - old_log_prob)
     
+    # Update ratio range
+    ratio = torch.clip(ratio, -10, 10)
+    
     surr1 = ratio * advantage
     surr2 = torch.clip(
         ratio,
