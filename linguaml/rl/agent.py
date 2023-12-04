@@ -92,7 +92,10 @@ class Agent(nn.Module):
         # Layers
         ##############################
         
-        self.fc = nn.Linear(self._n_state_features, 64)
+        self.fc = nn.Sequential(
+            nn.Linear(self._n_state_features, 64),
+            nn.ReLU(inplace=True),
+        )
         
         self.lstm = nn.LSTM(
             input_size=64,

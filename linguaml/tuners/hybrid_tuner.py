@@ -222,8 +222,15 @@ class HybridTuner:
                 )
                 
                 # Update the agent
+                
+                # Clear the gradients
                 optimizer.zero_grad()
+                
+                # Compute gradients
                 loss.backward()
+                
+                # Clip the gradients
+                torch.nn.utils.clip_grad_norm_(self._rl_agent.parameters(), 1.0)
+                
+                # Update the parameters of the network
                 optimizer.step()
-
-    

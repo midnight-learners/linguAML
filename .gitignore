@@ -38,9 +38,6 @@
 # Experiments
 /experiments
 
-# Report directory
-/report
-
 # Auxiliary files when compiling LaTeX 
 **/*.aux
 **/*.bbl
@@ -57,3 +54,9 @@
 **/*.ind
 **/*.ilg
 **/*.log
+
+# Report directory
+/report
+
+# Meeting notes
+/meeting-notes
